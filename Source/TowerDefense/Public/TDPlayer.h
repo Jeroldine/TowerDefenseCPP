@@ -21,6 +21,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void SetUpCameraComponent();
+
+	UFUNCTION()
+	void SetUpMovementComponent();
+
+	UFUNCTION()
+	void SetUpMouseEvents();
+
+	UFUNCTION()
+	void SetUpCameraBounds();
+
+	// camera controls
+	UFUNCTION()
+	void CameraFollow();
+
+	UFUNCTION()
+	void ZoomCamera(float Value);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -34,6 +53,33 @@ public:
 
 	// movement component
 	UPROPERTY(VisibleAnywhere)
-	UFloatingPawnMovement* movementComponent;
+	UFloatingPawnMovement* FloatingPawnMovement;
 
+	// player controller
+	UPROPERTY(VisibleAnywhere)
+	APlayerController* PC;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
+	float bufferScreenW = 0.25f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
+	float bufferScreenH = 0.25f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float deadZoneWLower = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float deadZoneWUpper = 400.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float deadZoneHLower = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float deadZoneHUpper = 400.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	FVector minBounds = FVector(-500, 0, 0);
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	FVector maxBounds = FVector(500, 3000, 0);
 };
