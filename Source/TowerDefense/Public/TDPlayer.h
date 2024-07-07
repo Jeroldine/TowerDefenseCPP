@@ -59,6 +59,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	APlayerController* PC;
 
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
 	float bufferScreenW = 0.25f;
 
@@ -82,4 +83,20 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	FVector maxBounds = FVector(500, 3000, 0);
+
+	// colours
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor defaultColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor highlightColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor buildColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor upgradeColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor destroyColour;
 };

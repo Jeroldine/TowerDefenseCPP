@@ -19,7 +19,7 @@ class TOWERDEFENSE_API ATowerDefenseGameModeBase : public AGameModeBase
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
-	TSubclassOf<class AGridManager> GridManagerClass;
+	TSubclassOf<class AActor> GridManagerClass;
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridManager)
