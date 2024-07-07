@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Math/IntPoint.h"
 #include "Tile.generated.h"
 
 UCLASS()
@@ -24,8 +25,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	///////////////
+	// functions //
+	///////////////
+	UFUNCTION()
+	FIntPoint GetGridPos();
+
+	UFUNCTION()
+	void SetGridPos(int row, int col);
+
+	///////////////
 	// variables //
 	///////////////
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint gridPos;
 
 
 };

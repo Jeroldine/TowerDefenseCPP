@@ -27,6 +27,9 @@ public:
 	UFUNCTION()
 	void SpawnGrid(int nRows, int nCols, float sideLength);
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Grid)
+	UFUNCTION()
+	ATile* SpawnSingleTile(int row, int col, float targetSideLength);
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> tileClass;
 };

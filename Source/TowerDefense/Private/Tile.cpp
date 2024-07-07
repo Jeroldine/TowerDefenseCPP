@@ -9,6 +9,11 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	if (!RootComponent)
+	{
+		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TileSceneComponent"));
+	}
+
 }
 
 // Called when the game starts or when spawned
@@ -23,5 +28,16 @@ void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+FIntPoint ATile::GetGridPos()
+{
+	return gridPos;
+}
+
+void ATile::SetGridPos(int row, int col)
+{
+	gridPos.X = row;
+	gridPos.Y = col;
 }
 
