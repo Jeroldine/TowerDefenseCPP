@@ -59,6 +59,8 @@ ATile* AGridManager::SpawnSingleTile(int row, int col, float targetSideLength)
 		if (tile)
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Single tile spawned."));
+			//tile->SetGridPos(row, col);
+			tile->Initialize(row, col, targetSideLength);
 			return tile;
 		}
 		else

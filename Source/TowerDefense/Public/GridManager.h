@@ -31,5 +31,5 @@ public:
 	ATile* SpawnSingleTile(int row, int col, float targetSideLength);
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> tileClass;
+	TSubclassOf<ATile> tileClass;
 };

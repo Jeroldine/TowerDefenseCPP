@@ -41,3 +41,22 @@ void ATile::SetGridPos(int row, int col)
 	gridPos.Y = col;
 }
 
+void ATile::Initialize(int row, int col, float targetSideLength)
+{
+	if (!tileMeshComponent)
+	{
+		tileMeshComponent = FindComponentByClass<UStaticMeshComponent>();
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Got tile mesh component."));
+	}
+
+	// set gridPos
+	gridPos.X = row;
+	gridPos.Y = col;
+
+	//adjust tile size
+	float xExtent = tileMeshComponent->GetStaticMesh()->GetBounds().BoxExtent.X;
+	float originalLength = 2 * xExtent;
+	float newScale = (targetSideLength / originalLength) * shrinkFactor;
+
+	tileMeshComponent->SetRelativeScale3D(FVector(newScale, newScale, 1));
+}

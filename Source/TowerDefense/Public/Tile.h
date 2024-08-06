@@ -33,11 +33,21 @@ public:
 	UFUNCTION()
 	void SetGridPos(int row, int col);
 
+	UFUNCTION()
+	void Initialize(int row, int col, float targetSideLength);
+
 	///////////////
 	// variables //
 	///////////////
 	UPROPERTY(VisibleAnywhere)
 	FIntPoint gridPos;
 
+	UPROPERTY(EditDefaultsOnly)
+	float sideLength;
 
+	UPROPERTY(EditDefaultsOnly)
+	float shrinkFactor = 0.98f;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UStaticMeshComponent* tileMeshComponent;
 };
