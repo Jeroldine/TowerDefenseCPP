@@ -32,4 +32,41 @@ void AGridManager::Tick(float DeltaTime)
 void AGridManager::SpawnGrid(int nRows, int nCols, float sideLength)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Spawning Grid."));
+	for (int i = 0; i < nRows; i++)
+	{
+		for (int j = 0; j < nCols; j++)
+		{
+			ATile* tile = SpawnSingleTile(i, j, sideLength);
+		}
+	}
+}
+
+ATile* AGridManager::SpawnSingleTile(int row, int col, float targetSideLength)
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		float xLocation = row * targetSideLength;
+		float yLocation = col * targetSideLength;
+		FVector location = FVector(xLocation, yLocation, 0.0);
+
+		ATile* tile = World->SpawnActor<ATile>(tileClass, location, FRotator(0, 0, 0), SpawnParams);
+
+		if (tile)
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Single tile spawned."));
+			//tile->SetGridPos(row, col);
+			tile->Initialize(row, col, targetSideLength);
+			return tile;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("No TileClass set in Blueprint."));
+		}
+	}
+	return nullptr;
 }

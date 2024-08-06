@@ -110,19 +110,23 @@ void ATDPlayer::CameraFollow()
 
 			if (MouseX > deadZoneWUpper)
 			{
-				FloatingPawnMovement->AddInputVector(directionW);
+				//FloatingPawnMovement->AddInputVector(directionW);
+				AddMovementInput(directionW);
 			}
 			if (MouseX < deadZoneWLower)
 			{
-				FloatingPawnMovement->AddInputVector(-directionW);
+				//FloatingPawnMovement->AddInputVector(-directionW);
+				AddMovementInput(-directionW);
 			}
 			if (MouseY > deadZoneHUpper)
 			{
-				FloatingPawnMovement->AddInputVector(-directionH);
+				//FloatingPawnMovement->AddInputVector(-directionH);
+				AddMovementInput(-directionH);
 			}
 			if (MouseY < deadZoneHLower)
 			{
-				FloatingPawnMovement->AddInputVector(directionH);
+				//FloatingPawnMovement->AddInputVector(directionH);
+				AddMovementInput(directionH);
 			}
 			// Clamp actor position within bounds
 			actorLoc.X = FMath::Clamp(actorLoc.X, minBounds.X, maxBounds.X);

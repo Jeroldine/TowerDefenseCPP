@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Math/IntPoint.h"
 #include "Tile.generated.h"
 
 UCLASS()
@@ -23,4 +24,30 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	///////////////
+	// functions //
+	///////////////
+	UFUNCTION()
+	FIntPoint GetGridPos();
+
+	UFUNCTION()
+	void SetGridPos(int row, int col);
+
+	UFUNCTION()
+	void Initialize(int row, int col, float targetSideLength);
+
+	///////////////
+	// variables //
+	///////////////
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint gridPos;
+
+	UPROPERTY(EditDefaultsOnly)
+	float sideLength;
+
+	UPROPERTY(EditDefaultsOnly)
+	float shrinkFactor = 0.98f;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UStaticMeshComponent* tileMeshComponent;
 };
