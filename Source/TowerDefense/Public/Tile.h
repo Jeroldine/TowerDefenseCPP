@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Math/IntPoint.h"
+#include "Helpers/InteractableInterface.h"
 #include "Tile.generated.h"
 
 UCLASS()
-class TOWERDEFENSE_API ATile : public AActor
+class TOWERDEFENSE_API ATile : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -35,6 +36,12 @@ public:
 
 	UFUNCTION()
 	void Initialize(int row, int col, float targetSideLength);
+
+	void OnClick_Implementation() override;
+
+	void OnHoverStart_Implementation() override;
+
+	void OnHoverStop_Implementation() override;
 
 	///////////////
 	// variables //

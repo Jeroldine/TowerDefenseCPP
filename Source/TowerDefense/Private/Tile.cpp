@@ -60,3 +60,18 @@ void ATile::Initialize(int row, int col, float targetSideLength)
 
 	tileMeshComponent->SetRelativeScale3D(FVector(newScale, newScale, 1));
 }
+
+void ATile::OnClick_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnClick implementation"));
+}
+
+void ATile::OnHoverStart_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnHoverStart implementation"));
+}
+
+void ATile::OnHoverStop_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnHoverStop implementation"));
+}
