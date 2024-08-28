@@ -21,6 +21,7 @@ void UObjectPoolComponent::BeginPlay()
 
 	// ...
 	
+	Initialize();
 }
 
 
@@ -32,28 +33,30 @@ void UObjectPoolComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UObjectPoolComponent::SetObjectClass(UClass* objClass)
+UClass* UObjectPoolComponent::GetObjectClass()
 {
-	if (objClass->ImplementsInterface(UPoolableInterface::StaticClass()))
-	{
-		pooledObjClass = objClass;
-	}
+	return pooledObjClass;
 }
 
-//void UObjectPoolComponent::Initialize()
-//{
-//	if (pooledObjClass)
-//	{
-//		UWorld* World = GetWorld();
-//		if (World)
-//		{
-//			FActorSpawnParameters SpawnParams;
-//			SpawnParams.Owner = GetOwner();
-//			SpawnParams.Instigator = GetOwner()->GetInstigator();
-//
-//			TScriptInterface<IPoolableInterface>* tower = World->SpawnActor<TScriptInterface<IPoolableInterface>>(pooledObjClass, FVector(0, 0, -500), FRotator(0, 0, 0), SpawnParams);
-//		}
-//	}
-//	
-//}
+void UObjectPoolComponent::Initialize()
+{
+	if (pooledObjClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = GetOwner();
+			SpawnParams.Instigator = GetOwner()->GetInstigator();
+
+			for (int i = 0; i < numObjects; i++)
+			{
+				AActor* obj = World->SpawnActor<AActor>(pooledObjClass, FVector(0, 0, -500), FRotator(0, 0, 0), SpawnParams);
+				TScriptInterface<IPoolableInterface> objInterface = TScriptInterface<IPoolableInterface>(obj);
+				_objects.Add(obj);
+			}
+		}
+	}
+	
+}
 

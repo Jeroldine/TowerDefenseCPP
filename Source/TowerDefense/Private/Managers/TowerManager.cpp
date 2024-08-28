@@ -13,8 +13,6 @@ ATowerManager::ATowerManager()
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TowerSceneComponent"));
 	}
-
-	CreateObjectPoolComponents();
 }
 
 // Called when the game starts or when spawned
@@ -22,17 +20,22 @@ void ATowerManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	GatherObjectPools();
 }
 
-void ATowerManager::CreateObjectPoolComponents()
+void ATowerManager::GatherObjectPools()
 {
-	for (UClass* pooledObjClass : pooledObjClasses)
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Storing Object Pools in TMap."));
+	TArray<UObjectPoolComponent*> objPools;
+	GetComponents<UObjectPoolComponent>(objPools);
+
+	for (UObjectPoolComponent* pool : objPools)
 	{
-		if (pooledObjClass)
+		if (pool->GetObjectClass())
 		{
-			UObjectPoolComponent* objPoolComp = CreateDefaultSubobject<UObjectPoolComponent>(TEXT("OjectPool"));
-			//objPoolComp->SetObjectClass(pooledObjClass);
-			//objectPoolComponents.Add(pooledObjClass, objPoolComp);
+			objectPoolComponents.Add(pool->GetObjectClass(), pool);
+			FString str = FString(pool->GetObjectClass()->GetName());
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, str);
 		}
 	}
 }

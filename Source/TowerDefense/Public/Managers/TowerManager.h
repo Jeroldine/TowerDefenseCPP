@@ -21,16 +21,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "PoolableInterface"))
-	TArray<UClass*>  pooledObjClasses;
-
 	UPROPERTY(EditDefaultsOnly)
 	TMap<UClass*, UObjectPoolComponent*> objectPoolComponents;
 
-	//UObjectPoolComponent* towerAPool;
-
 	UFUNCTION()
-	void CreateObjectPoolComponents();
+	void GatherObjectPools();
 	
 public:	
 	// Called every frame
