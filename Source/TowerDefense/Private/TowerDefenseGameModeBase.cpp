@@ -19,6 +19,8 @@ void ATowerDefenseGameModeBase::StartPlay()
 
     // Spawn things into the world
     SpawnGridManager(numGridRows, numGridCols, tileSize);
+    SpawnTowerManager();
+    SpawnEnemyManager();
 }
 
 void ATowerDefenseGameModeBase::SpawnGridManager(int rows, int cols, float sideLength)
@@ -51,4 +53,64 @@ void ATowerDefenseGameModeBase::SpawnGridManager(int rows, int cols, float sideL
         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("GridManagerClass not set in TDGameMode Blueprint."));
     }
     
+}
+
+void ATowerDefenseGameModeBase::SpawnTowerManager()
+{
+    if (TowerManagerClass)
+    {
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            FActorSpawnParameters SpawnParams;
+            SpawnParams.Owner = this;
+            SpawnParams.Instigator = GetInstigator();
+
+            ATowerManager* TowerManager = World->SpawnActor<ATowerManager>(TowerManagerClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+
+            if (TowerManager)
+            {
+                // Successfully spawned the GridManager
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("TowerManager spawned successfully."));
+            }
+            else
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Failed to spawn TowerManager."));
+            }
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerManagerClass not set in TDGameMode Blueprint."));
+    }
+}
+
+void ATowerDefenseGameModeBase::SpawnEnemyManager()
+{
+    if (EnemyManagerClass)
+    {
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            FActorSpawnParameters SpawnParams;
+            SpawnParams.Owner = this;
+            SpawnParams.Instigator = GetInstigator();
+
+            AEnemyManager* EnemyManager = World->SpawnActor<AEnemyManager>(EnemyManagerClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+
+            if (EnemyManager)
+            {
+                // Successfully spawned the GridManager
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("EnemyManager spawned successfully."));
+            }
+            else
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Failed to spawn EnemyManager."));
+            }
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("EnemyManager not set in TDGameMode Blueprint."));
+    }
 }

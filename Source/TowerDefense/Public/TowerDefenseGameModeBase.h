@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "GridManager.h"
+#include "Managers/TowerManager.h"
+#include "Managers/EnemyManager.h"
 #include "TowerDefenseGameModeBase.generated.h"
 
 /**
@@ -21,6 +23,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	TSubclassOf<class AGridManager> GridManagerClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = TowerManager)
+	TSubclassOf<class ATowerManager> TowerManagerClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = EnemyManager)
+	TSubclassOf<class AEnemyManager> EnemyManagerClass;
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridManager)
 	int numGridRows = 7;
@@ -34,4 +42,10 @@ public:
 	// function that spawns the GridManager
 	UFUNCTION()
 	void SpawnGridManager(int rows, int cols, float sideLength);
+
+	UFUNCTION()
+	void SpawnTowerManager();
+
+	UFUNCTION()
+	void SpawnEnemyManager();
 };

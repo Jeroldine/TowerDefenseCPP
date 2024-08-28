@@ -32,3 +32,28 @@ void UObjectPoolComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+void UObjectPoolComponent::SetObjectClass(UClass* objClass)
+{
+	if (objClass->ImplementsInterface(UPoolableInterface::StaticClass()))
+	{
+		pooledObjClass = objClass;
+	}
+}
+
+//void UObjectPoolComponent::Initialize()
+//{
+//	if (pooledObjClass)
+//	{
+//		UWorld* World = GetWorld();
+//		if (World)
+//		{
+//			FActorSpawnParameters SpawnParams;
+//			SpawnParams.Owner = GetOwner();
+//			SpawnParams.Instigator = GetOwner()->GetInstigator();
+//
+//			TScriptInterface<IPoolableInterface>* tower = World->SpawnActor<TScriptInterface<IPoolableInterface>>(pooledObjClass, FVector(0, 0, -500), FRotator(0, 0, 0), SpawnParams);
+//		}
+//	}
+//	
+//}
+
