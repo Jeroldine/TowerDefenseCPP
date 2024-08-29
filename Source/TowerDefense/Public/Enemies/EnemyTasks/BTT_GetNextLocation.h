@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "BTT_GetNextLocation.generated.h"
 
+//#include "NavigationSystem.h"
 /**
  * 
  */
