@@ -37,6 +37,7 @@ public:
 	UFUNCTION()
 	void Initialize(int row, int col, float targetSideLength);
 
+	//Interface functions
 	void OnClick_Implementation() override;
 
 	void OnHoverStart_Implementation() override;

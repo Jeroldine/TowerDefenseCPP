@@ -2,6 +2,8 @@
 
 
 #include "TDPlayer.h"
+#include "DrawDebugHelpers.h"
+#include "Helpers/InteractableInterface.h"
 
 // Sets default values
 ATDPlayer::ATDPlayer()
@@ -81,6 +83,7 @@ void ATDPlayer::SetUpCameraBounds()
 void ATDPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CheckMouseOverActor();
 	CameraFollow();
 }
 
@@ -140,5 +143,61 @@ void ATDPlayer::ZoomCamera(float Value)
 {
 	FVector direction = TDCameraComponent->GetForwardVector();
 	AddMovementInput(direction, Value);
+}
+
+void ATDPlayer::CheckMouseOverActor()
+{
+	// Get the mouse position
+	float MouseX, MouseY;
+	if (PC->GetMousePosition(MouseX, MouseY))
+	{
+		FVector WorldLocation, WorldDirection;
+		// Convert screen position to world space direction
+		if (PC->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldLocation, WorldDirection))
+		{
+			FVector Start = WorldLocation;
+			FVector End = Start + (WorldDirection * 10000.0f); // Line trace distance
+
+			FHitResult HitResult;
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActor(PC->GetPawn()); // Ignore the player itself
+
+			// Perform the line trace
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+			{
+				AActor* hitActor = HitResult.GetActor();
+				IInteractableInterface* interactInterface = Cast<IInteractableInterface>(hitActor);
+
+				if (hitActor && interactInterface) // check if the actor I hit has the InteractableInterface
+				{
+					if (hitActor != currentHoveredOverActor)
+					{
+						GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
+
+
+						currentHoveredOverActor = hitActor;
+						IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
+					}
+
+					
+					
+					
+				}
+				else // actor does not have the interface
+				{
+					currentHoveredOverActor = nullptr;
+				}
+			}
+			else // didn't hit anything
+			{
+				currentHoveredOverActor = nullptr;
+			}
+		}
+	}
+}
+
+void ATDPlayer::OnMouseClicked()
+{
+
 }
 

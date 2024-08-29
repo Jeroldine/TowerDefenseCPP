@@ -40,6 +40,12 @@ protected:
 	UFUNCTION()
 	void ZoomCamera(float Value);
 
+	UFUNCTION()
+	void CheckMouseOverActor();
+
+	UFUNCTION()
+	void OnMouseClicked();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -59,7 +65,14 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	APlayerController* PC;
 
+	// cached objects that I interact with
+	UPROPERTY()
+	AActor* currentHoveredOverActor;
 
+	//UPROPERTY()
+	// selected tower
+
+	// camera stuff
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
 	float bufferScreenW = 0.25f;
 
