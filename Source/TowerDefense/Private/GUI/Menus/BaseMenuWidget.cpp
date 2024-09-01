@@ -3,7 +3,7 @@
 
 #include "GUI/Menus/BaseMenuWidget.h"
 #include "GUI/TowerDefenseHUD.h"
-#include "GameFramework/PlayerController.h"
+
 
 void UBaseMenuWidget::NativeConstruct()
 {
@@ -31,7 +31,6 @@ ATowerDefenseHUD* UBaseMenuWidget::GetTowerDefenseHUD()
         return Cast<ATowerDefenseHUD>(OwningPlayer->GetHUD());
     }
     
-
     return nullptr;
 }
 

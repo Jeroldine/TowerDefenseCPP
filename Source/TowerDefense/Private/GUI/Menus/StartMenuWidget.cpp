@@ -31,8 +31,6 @@ void UStartMenuWidget::DeconfigScreen()
 {
 }
 
-
-
 ATowerDefenseHUD* UStartMenuWidget::GetTowerDefenseHUD()
 {
 	return Super::GetTowerDefenseHUD();
@@ -43,24 +41,6 @@ AEnemyManager* UStartMenuWidget::GetEnemyManager()
 	return nullptr;
 }
 
-//void UStartMenuWidget::OnStartPressed()
-//{
-//	ATowerDefenseHUD* towerDefHUD = GetTowerDefenseHUD();
-//	if (towerDefHUD)
-//	{
-//		towerDefHUD->ShowGameMenu();
-//	}
-//}
 
-//void UStartMenuWidget::OnQuitPressed()
-//{
-//	if (towerDefHUD)
-//	{
-//		if (APlayerController* PC = towerDefHUD->PlayerOwner)
-//		{
-//			PC->ConsoleCommand("quit");
-//		}
-//	}
-//}
 
 

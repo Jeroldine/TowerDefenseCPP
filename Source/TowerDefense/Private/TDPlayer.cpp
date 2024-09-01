@@ -201,3 +201,52 @@ void ATDPlayer::OnMouseClicked()
 
 }
 
+ATowerBase* ATDPlayer::RetrieveTower(UClass*)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("asking for tower"));
+	return nullptr;
+}
+
+bool ATDPlayer::GetInBuildMode()
+{
+	return inBuildMode;
+}
+
+bool ATDPlayer::GetInDestroyMode()
+{
+	return inDestroyMode;
+}
+
+void ATDPlayer::EnterBuildMode()
+{
+	SetModes(true, false);
+
+}
+
+void ATDPlayer::EnterDestroyMode()
+{
+	SetModes(false, true);
+	ReturnTower();
+}
+
+void ATDPlayer::ExitAllModes()
+{
+	SetModes(false, false);
+	ReturnTower();
+}
+
+void ATDPlayer::SetModes(bool buildMode, bool destroyMode)
+{
+	inBuildMode = buildMode;
+	inDestroyMode = destroyMode;
+}
+
+void ATDPlayer::ReturnTower()
+{
+	if (selectedTower)
+	{
+		// disable tower
+		selectedTower = nullptr;
+	}
+}
+

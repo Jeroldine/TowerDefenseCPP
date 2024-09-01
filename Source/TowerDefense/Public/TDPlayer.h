@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Towers/TowerBase.h"
 #include "TDPlayer.generated.h"
 
 UCLASS()
@@ -40,18 +41,64 @@ protected:
 	UFUNCTION()
 	void ZoomCamera(float Value);
 
+	// interactions
 	UFUNCTION()
 	void CheckMouseOverActor();
 
 	UFUNCTION()
 	void OnMouseClicked();
 
+	///////////////
+	// variables //
+	///////////////
+
+	UPROPERTY(VisibleAnywhere, Category = States)
+	bool inBuildMode = false;
+
+	UPROPERTY(VisibleAnywhere, Category = States)
+	bool inDestroyMode = false;
+
 public:	
+
+	///////////////
+	// functions //
+	///////////////
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// towers
+	UFUNCTION()
+	ATowerBase* RetrieveTower(UClass* towerClass);
+
+	// states
+	UFUNCTION()
+	bool GetInBuildMode();
+
+	UFUNCTION()
+	bool GetInDestroyMode();
+
+	UFUNCTION()
+	void EnterBuildMode();
+
+	UFUNCTION()
+	void EnterDestroyMode();
+
+	UFUNCTION()
+	void ExitAllModes();
+
+	UFUNCTION()
+	void SetModes(bool buildMode, bool destroyMode);
+
+	UFUNCTION()
+	void ReturnTower();
+
+	///////////////
+	// variables //
+	///////////////
 
 	// camera
 	UPROPERTY(VisibleAnywhere)
@@ -69,8 +116,8 @@ public:
 	UPROPERTY()
 	AActor* currentHoveredOverActor;
 
-	//UPROPERTY()
-	// selected tower
+	UPROPERTY()
+	ATowerBase* selectedTower;
 
 	// camera stuff
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
@@ -112,4 +159,5 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
 	FLinearColor destroyColour;
+
 };

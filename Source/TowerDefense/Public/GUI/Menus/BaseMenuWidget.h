@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CanvasPanel.h"
+#include "GameFramework/PlayerController.h"
 #include "BaseMenuWidget.generated.h"
 
 /**
