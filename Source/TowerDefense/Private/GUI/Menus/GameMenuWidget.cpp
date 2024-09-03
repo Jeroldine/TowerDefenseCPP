@@ -67,7 +67,7 @@ void UGameMenuWidget::OnBuildClick()
 	destroyBtnBackImage->SetVisibility(ESlateVisibility::Hidden);
 
 	ATDPlayer* tdPlayer = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
-	tdPlayer->SetModes(true, false);
+	tdPlayer->EnterBuildMode();
 }
 
 void UGameMenuWidget::OnDestroyClick()
@@ -78,7 +78,7 @@ void UGameMenuWidget::OnDestroyClick()
 	ClearSubMenu(ESlateVisibility::Hidden, ESlateVisibility::SelfHitTestInvisible);
 
 	ATDPlayer* tdPlayer = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
-	tdPlayer->SetModes(false, true);
+	tdPlayer->EnterDestroyMode();
 }
 
 void UGameMenuWidget::OnCancelClick()
@@ -87,7 +87,7 @@ void UGameMenuWidget::OnCancelClick()
 		if (tdPlayer->GetInBuildMode() || tdPlayer->GetInDestroyMode())
 		{
 			ClearSubMenu(ESlateVisibility::Hidden, ESlateVisibility::Hidden);
-			tdPlayer->SetModes(false, false);
+			tdPlayer->ExitAllModes();
 		}
 }
 

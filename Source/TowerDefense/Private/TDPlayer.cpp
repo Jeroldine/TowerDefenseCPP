@@ -210,11 +210,7 @@ void ATDPlayer::RetrieveTower(UClass* towerClass)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("asking for tower"));
 
-	if (selectedTower)
-	{
-		IPoolableInterface::Execute_Disable(selectedTower);
-		selectedTower = nullptr;
-	}
+	ReturnTower();
 
 	ATowerManager* towerManager = Cast<ATowerManager>(UGameplayStatics::GetActorOfClass(this, ATowerManager::StaticClass()));
 	selectedTower = Cast<ATowerBase>(towerManager->RequestTower(towerClass));
@@ -258,7 +254,7 @@ void ATDPlayer::ReturnTower()
 {
 	if (selectedTower)
 	{
-		// disable tower
+		IPoolableInterface::Execute_Disable(selectedTower);
 		selectedTower = nullptr;
 	}
 }
