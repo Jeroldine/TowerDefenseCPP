@@ -47,3 +47,10 @@ void ATowerManager::Tick(float DeltaTime)
 
 }
 
+AActor* ATowerManager::RequestTower(TSubclassOf<ATowerBase> towerType)
+{
+	UObjectPoolComponent* objPool = *objectPoolComponents.Find(towerType);
+
+	return objPool->SpawnObject();
+}
+

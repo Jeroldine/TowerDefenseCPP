@@ -6,7 +6,11 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Kismet/GameplayStatics.h"
+#include "Helpers/PoolableInterface.h"
+#include "Managers/TowerManager.h"
 #include "Towers/TowerBase.h"
+#include "Tile.h"
 #include "TDPlayer.generated.h"
 
 UCLASS()
@@ -52,6 +56,9 @@ protected:
 	// variables //
 	///////////////
 
+	UPROPERTY(VisibleAnywhere)
+	ATowerBase* selectedTower;
+
 	UPROPERTY(VisibleAnywhere, Category = States)
 	bool inBuildMode = false;
 
@@ -72,7 +79,7 @@ public:
 
 	// towers
 	UFUNCTION()
-	ATowerBase* RetrieveTower(UClass* towerClass);
+	void RetrieveTower(UClass* towerClass);
 
 	// states
 	UFUNCTION()
@@ -115,9 +122,6 @@ public:
 	// cached objects that I interact with
 	UPROPERTY()
 	AActor* currentHoveredOverActor;
-
-	UPROPERTY()
-	ATowerBase* selectedTower;
 
 	// camera stuff
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)

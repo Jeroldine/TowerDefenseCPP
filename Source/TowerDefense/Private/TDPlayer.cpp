@@ -177,6 +177,11 @@ void ATDPlayer::CheckMouseOverActor()
 
 						currentHoveredOverActor = hitActor;
 						IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
+
+						if (selectedTower && Cast<ATile>(currentHoveredOverActor))
+						{
+							selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
+						}
 					}
 
 					
@@ -201,10 +206,18 @@ void ATDPlayer::OnMouseClicked()
 
 }
 
-ATowerBase* ATDPlayer::RetrieveTower(UClass*)
+void ATDPlayer::RetrieveTower(UClass* towerClass)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("asking for tower"));
-	return nullptr;
+
+	if (selectedTower)
+	{
+		IPoolableInterface::Execute_Disable(selectedTower);
+		selectedTower = nullptr;
+	}
+
+	ATowerManager* towerManager = Cast<ATowerManager>(UGameplayStatics::GetActorOfClass(this, ATowerManager::StaticClass()));
+	selectedTower = Cast<ATowerBase>(towerManager->RequestTower(towerClass));
 }
 
 bool ATDPlayer::GetInBuildMode()

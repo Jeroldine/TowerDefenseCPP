@@ -24,24 +24,26 @@ protected:
 	///////////////
 	// variables //
 	///////////////
-	/*UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "IPoolableInterface"))
-	TSubclassOf<AActor> pooledObjClass;*/
 
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "PoolableInterface"))
 	TSubclassOf<AActor> pooledObjClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	int numObjects = 10;
-
+	
 	UPROPERTY(VisibleAnywhere)
-	TArray<TScriptInterface<IPoolableInterface>> _objects;
+	TArray<AActor*> _objects;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	UFUNCTION()
 	UClass* GetObjectClass();
 
 	void Initialize();
+
+	AActor* CreateSingleObject();
+
+	AActor* SpawnObject();
 };
