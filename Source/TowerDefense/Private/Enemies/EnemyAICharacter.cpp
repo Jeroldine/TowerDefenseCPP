@@ -32,3 +32,8 @@ void AEnemyAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
+float AEnemyAICharacter::GetDamageAmount()
+{
+	return dmgAmount;
+}
+

@@ -32,11 +32,20 @@ void AGridManager::Tick(float DeltaTime)
 void AGridManager::SpawnGrid(int nRows, int nCols, float sideLength)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Spawning Grid."));
+
+	// uses default dimensions if bad data given
+	ValidateDimensions();
+
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
 		{
 			ATile* tile = SpawnSingleTile(i, j, sideLength);
+			if (tileMaterialMaster)
+			{
+				tile->SetMaterialInstance(tileMaterialMaster);
+			}
+			mapOfTiles.Add(tile->GetGridPos(), tile);
 		}
 	}
 }
@@ -69,4 +78,27 @@ ATile* AGridManager::SpawnSingleTile(int row, int col, float targetSideLength)
 		}
 	}
 	return nullptr;
+}
+
+void AGridManager::ValidateDimensions()
+{
+
+}
+
+void AGridManager::SetStartGoal(FIntPoint start, FIntPoint goal)
+{
+
+
+	startTilePos = start;
+	goalTilePos = goal;
+}
+
+FIntPoint AGridManager::GetGoalTilePos()
+{
+	return goalTilePos;
+}
+
+FIntPoint AGridManager::GetStartTilePos()
+{
+	return startTilePos;
 }

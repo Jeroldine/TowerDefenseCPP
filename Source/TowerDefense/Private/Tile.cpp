@@ -13,7 +13,6 @@ ATile::ATile()
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TileSceneComponent"));
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -59,6 +58,20 @@ void ATile::Initialize(int row, int col, float targetSideLength)
 	float newScale = (targetSideLength / originalLength) * shrinkFactor;
 
 	tileMeshComponent->SetRelativeScale3D(FVector(newScale, newScale, 1));
+}
+
+void ATile::SetMaterialInstance(UMaterial* masterMaterial)
+{
+	if (tileMeshComponent && masterMaterial)
+	{
+		tileMaterialInstance = UMaterialInstanceDynamic::Create(masterMaterial, this);
+		tileMeshComponent->SetMaterial(0, tileMaterialInstance);
+	}
+}
+
+void ATile::SetMaterialColor(FLinearColor newColor)
+{
+	tileMaterialInstance->SetVectorParameterValue(FName("BaseColor"), newColor);
 }
 
 void ATile::OnClick_Implementation()

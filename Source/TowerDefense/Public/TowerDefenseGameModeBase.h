@@ -7,6 +7,8 @@
 #include "GridManager.h"
 #include "Managers/TowerManager.h"
 #include "Managers/EnemyManager.h"
+#include "Fortress.h"
+#include "Math/IntPoint.h"
 #include "TowerDefenseGameModeBase.generated.h"
 
 /**
@@ -20,6 +22,7 @@ class TOWERDEFENSE_API ATowerDefenseGameModeBase : public AGameModeBase
 	virtual void StartPlay() override;
 
 protected:
+	// classes to spawn
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	TSubclassOf<class AGridManager> GridManagerClass;
 
@@ -29,17 +32,39 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = EnemyManager)
 	TSubclassOf<class AEnemyManager> EnemyManagerClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = Fortress)
+	TSubclassOf<class AFortress> FortressClass;
+
+	// ref to objects of above
+	UPROPERTY(VisibleAnywhere)
+	AGridManager* gridManagerRef;
+
+	UPROPERTY(VisibleAnywhere)
+	ATowerManager* towerManagerRef;
+
+	UPROPERTY(VisibleAnywhere)
+	AEnemyManager* enemyManagerRef;
+
+	UPROPERTY(VisibleAnywhere)
+	AFortress* fortressRef;
+
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridManager)
+	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	int numGridRows = 7;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridManager)
+	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	int numGridCols = 15;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridManager)
 	float tileSize = 200.0f;
 
-	// function that spawns the GridManager
+	UPROPERTY(EditDefaultsOnly, Category = GridManager)
+	FIntPoint startTile;
+
+	UPROPERTY(EditDefaultsOnly, Category = GridManager)
+	FIntPoint goalTile;
+
+	// functions to spawn actors
 	UFUNCTION()
 	void SpawnGridManager(int rows, int cols, float sideLength);
 
@@ -48,4 +73,14 @@ public:
 
 	UFUNCTION()
 	void SpawnEnemyManager();
+
+	UFUNCTION()
+	void SpawnFortress();
+
+	// game flow
+	UFUNCTION()
+	void StartGame();
+
+	UFUNCTION()
+	void ResetGame();
 };

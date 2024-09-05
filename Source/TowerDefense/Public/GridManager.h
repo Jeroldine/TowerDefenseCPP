@@ -20,6 +20,46 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// variables
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int defaultGridRows = 8;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int defaultGridCols = 16;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	float defaulttileSize = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minGridRows = 5;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxGridRows = 50;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minGridCols = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxGridCols = 100;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minTileSize = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxTileSize = 400.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Materials)
+	UMaterial* tileMaterialMaster;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, ATile*> mapOfTiles;
+
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint startTilePos;
+
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint goalTilePos;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,4 +72,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> tileClass;
+
+// functions
+	UFUNCTION()
+	void ValidateDimensions();
+
+	UFUNCTION()
+	void SetStartGoal(FIntPoint start, FIntPoint goal);
+
+	UFUNCTION()
+	FIntPoint GetGoalTilePos();
+
+	UFUNCTION()
+	FIntPoint GetStartTilePos();
 };

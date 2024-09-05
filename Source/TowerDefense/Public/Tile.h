@@ -21,32 +21,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	///////////////
-	// functions //
-	///////////////
-	UFUNCTION()
-	FIntPoint GetGridPos();
-
-	UFUNCTION()
-	void SetGridPos(int row, int col);
-
-	UFUNCTION()
-	void Initialize(int row, int col, float targetSideLength);
-
-	//Interface functions
-	void OnClick_Implementation() override;
-
-	void OnHoverStart_Implementation() override;
-
-	void OnHoverStop_Implementation() override;
-
-	///////////////
-	// variables //
-	///////////////
 	UPROPERTY(VisibleAnywhere)
 	FIntPoint gridPos;
 
@@ -58,4 +32,51 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* tileMeshComponent;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UMaterialInstanceDynamic* tileMaterialInstance;
+
+	UPROPERTY(VisibleAnywhere)
+	bool canBuildOn = true;
+
+	UPROPERTY(VisibleAnywhere)
+	bool isOccupied = false;
+
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	///////////////
+	// functions //
+	///////////////
+	UFUNCTION()
+	FIntPoint GetGridPos();
+
+	//Set up
+	UFUNCTION()
+	void SetGridPos(int row, int col);
+
+	UFUNCTION()
+	void Initialize(int row, int col, float targetSideLength);
+
+	UFUNCTION()
+	void SetMaterialInstance(UMaterial* masterMaterial);
+
+	UFUNCTION()
+	void SetMaterialColor(FLinearColor newColor);
+
+	//Interface functions
+	void OnClick_Implementation() override;
+
+	void OnHoverStart_Implementation() override;
+
+	void OnHoverStop_Implementation() override;
+
+
+	///////////////
+	// variables //
+	///////////////
+	
+	
 };

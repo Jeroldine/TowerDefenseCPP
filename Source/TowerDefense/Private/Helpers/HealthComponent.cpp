@@ -18,6 +18,9 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (maxHealth <= 0) maxHealth = 100.0f;
+	health = maxHealth;
 
 	// ...
 	
@@ -59,5 +62,15 @@ float UHealthComponent::GetHealth()
 float UHealthComponent::GetNormalizedHealth()
 {
 	return FMath::Clamp(health / maxHealth, 0.0f, 1.0f);
+}
+
+void UHealthComponent::SetHealth(float amount)
+{
+	health = FMath::Clamp(amount, 0.0f, maxHealth);
+}
+
+void UHealthComponent::ResetHealth()
+{
+	health = maxHealth;
 }
 

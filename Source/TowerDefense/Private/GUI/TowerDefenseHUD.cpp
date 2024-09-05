@@ -38,6 +38,7 @@ void ATowerDefenseHUD::ShowStartMenu()
 void ATowerDefenseHUD::ShowGameMenu()
 {
 	ShowMenu(gameHUD);
+	// start start everything get gamemode?
 }
 
 void ATowerDefenseHUD::ShowGameOverMenu()
