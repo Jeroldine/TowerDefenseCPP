@@ -170,26 +170,38 @@ void ATDPlayer::CheckMouseOverActor()
 
 				if (hitActor && interactInterface) // check if the actor I hit has the InteractableInterface
 				{
-					if (hitActor != currentHoveredOverActor)
+					if (hitActor != currentHoveredOverActor) // only do something if the hit actor is different than current 
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
+						// Handle OnHoverStop 
+						if (currentHoveredOverActor)
+							IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
 
-
+						// hover over logic
 						currentHoveredOverActor = hitActor;
 						IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
 
-						if (selectedTower && Cast<ATile>(currentHoveredOverActor))
+						// secondary actions
+						ATile* currentTile = Cast<ATile>(currentHoveredOverActor);
+
+						if (currentTile) // always change tile colour
+						{
+							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Changing Tile colour"));
+							currentTile->SetMaterialColor(ChooseTileColor(currentTile));
+						}
+							
+						if (selectedTower && currentTile) // in build mode trying to build tower
 						{
 							selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
+							// flood fill to determine if can build
 						}
-					}
-
-					
-					
-					
+					}					
 				}
 				else // actor does not have the interface
 				{
+					if (currentHoveredOverActor)
+						IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
+
 					currentHoveredOverActor = nullptr;
 				}
 			}
@@ -204,6 +216,35 @@ void ATDPlayer::CheckMouseOverActor()
 void ATDPlayer::OnMouseClicked()
 {
 
+}
+
+FLinearColor ATDPlayer::ChooseTileColor(ATile* tile)
+{
+	if (!tile) return FLinearColor();
+
+	if (inBuildMode) 
+	{
+		if (tile->GetCanBuildOn() && tile->GetNumOccupants() == 0) // blue if can build on tile and no occupants
+			return buildColour;
+		else
+			return destroyColour; // red if can't build or occupants		
+	}
+	else if (inDestroyMode)
+	{
+		if (tile->CheckForTowerOccupant()) // red if building in occupants
+			return destroyColour;
+		else
+			return highlightColour; // white if no building in occupants 
+	}
+	else
+	{
+		if (tile->CheckForTowerOccupant()) // orange if tower
+			return upgradeColour;
+		else
+			return highlightColour; // white if no tower
+	}
+
+	return FLinearColor();
 }
 
 void ATDPlayer::RetrieveTower(UClass* towerClass)

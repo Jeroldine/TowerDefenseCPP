@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Math/IntPoint.h"
 #include "Helpers/InteractableInterface.h"
+#include "Towers/TowerBase.h"
+#include "Enemies/EnemyAICharacter.h"
 #include "Tile.generated.h"
 
 UCLASS()
@@ -37,11 +39,13 @@ protected:
 	UMaterialInstanceDynamic* tileMaterialInstance;
 
 	UPROPERTY(VisibleAnywhere)
+	FLinearColor defaultColor;
+
+	UPROPERTY(VisibleAnywhere)
 	bool canBuildOn = true;
 
 	UPROPERTY(VisibleAnywhere)
-	bool isOccupied = false;
-
+	TMap<FString, AActor*> occupantsMap;
 
 public:	
 	// Called every frame
@@ -63,9 +67,6 @@ public:
 	UFUNCTION()
 	void SetMaterialInstance(UMaterial* masterMaterial);
 
-	UFUNCTION()
-	void SetMaterialColor(FLinearColor newColor);
-
 	//Interface functions
 	void OnClick_Implementation() override;
 
@@ -73,10 +74,29 @@ public:
 
 	void OnHoverStop_Implementation() override;
 
+	// utilities
+	UFUNCTION()
+	void SetMaterialColor(FLinearColor newColor);
 
-	///////////////
-	// variables //
-	///////////////
-	
+	UFUNCTION()
+	int GetNumOccupants();
+
+	UFUNCTION()
+	void AddOccupant(AActor* newOccupant);
+
+	UFUNCTION()
+	void RemoveOccupant(AActor* leavingOccupant);
+
+	UFUNCTION()
+	void SetCanBuildOn(bool canBuild);
+
+	UFUNCTION()
+	bool GetCanBuildOn();
+
+	UFUNCTION()
+	bool CheckForTowerOccupant();
+
+	UFUNCTION()
+	bool CheckForEnemyOccupant();
 	
 };

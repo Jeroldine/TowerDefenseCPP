@@ -30,7 +30,8 @@ AFortress::AFortress()
 void AFortress::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
 }
 
 // Called every frame

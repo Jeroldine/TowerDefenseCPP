@@ -52,6 +52,10 @@ protected:
 	UFUNCTION()
 	void OnMouseClicked();
 
+	// Utilities
+	UFUNCTION()
+	FLinearColor ChooseTileColor(ATile* tile);
+
 	///////////////
 	// variables //
 	///////////////
@@ -149,9 +153,6 @@ public:
 	FVector maxBounds = FVector(500, 3000, 0);
 
 	// colours
-	UPROPERTY(EditDefaultsOnly, Category = Colours)
-	FLinearColor defaultColour;
-
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
 	FLinearColor highlightColour;
 
