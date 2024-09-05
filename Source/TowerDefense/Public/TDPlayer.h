@@ -6,6 +6,11 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Kismet/GameplayStatics.h"
+#include "Helpers/PoolableInterface.h"
+#include "Managers/TowerManager.h"
+#include "Towers/TowerBase.h"
+#include "Tile.h"
 #include "TDPlayer.generated.h"
 
 UCLASS()
@@ -40,12 +45,71 @@ protected:
 	UFUNCTION()
 	void ZoomCamera(float Value);
 
+	// interactions
+	UFUNCTION()
+	void CheckMouseOverActor();
+
+	UFUNCTION()
+	void OnMouseClicked();
+
+	// Utilities
+	UFUNCTION()
+	FLinearColor ChooseTileColor(ATile* tile);
+
+	///////////////
+	// variables //
+	///////////////
+
+	UPROPERTY(VisibleAnywhere)
+	ATowerBase* selectedTower;
+
+	UPROPERTY(VisibleAnywhere, Category = States)
+	bool inBuildMode = false;
+
+	UPROPERTY(VisibleAnywhere, Category = States)
+	bool inDestroyMode = false;
+
 public:	
+
+	///////////////
+	// functions //
+	///////////////
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// towers
+	UFUNCTION()
+	void RetrieveTower(UClass* towerClass);
+
+	// states
+	UFUNCTION()
+	bool GetInBuildMode();
+
+	UFUNCTION()
+	bool GetInDestroyMode();
+
+	UFUNCTION()
+	void EnterBuildMode();
+
+	UFUNCTION()
+	void EnterDestroyMode();
+
+	UFUNCTION()
+	void ExitAllModes();
+
+	UFUNCTION()
+	void SetModes(bool buildMode, bool destroyMode);
+
+	UFUNCTION()
+	void ReturnTower();
+
+	///////////////
+	// variables //
+	///////////////
 
 	// camera
 	UPROPERTY(VisibleAnywhere)
@@ -59,7 +123,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	APlayerController* PC;
 
+	// cached objects that I interact with
+	UPROPERTY()
+	AActor* currentHoveredOverActor;
 
+	// camera stuff
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
 	float bufferScreenW = 0.25f;
 
@@ -86,9 +154,6 @@ public:
 
 	// colours
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
-	FLinearColor defaultColour;
-
-	UPROPERTY(EditDefaultsOnly, Category = Colours)
 	FLinearColor highlightColour;
 
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
@@ -99,4 +164,5 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
 	FLinearColor destroyColour;
+
 };

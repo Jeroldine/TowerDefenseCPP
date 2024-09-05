@@ -21,6 +21,7 @@ void UObjectPoolComponent::BeginPlay()
 
 	// ...
 	
+	Initialize();
 }
 
 
@@ -30,5 +31,63 @@ void UObjectPoolComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+UClass* UObjectPoolComponent::GetObjectClass()
+{
+	return pooledObjClass;
+}
+
+void UObjectPoolComponent::Initialize()
+{
+	if (pooledObjClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = GetOwner();
+			SpawnParams.Instigator = GetOwner()->GetInstigator();
+
+			for (int i = 0; i < numObjects; i++)
+			{
+				AActor* obj = World->SpawnActor<AActor>(pooledObjClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+				IPoolableInterface::Execute_Disable(obj);
+				_objects.Add(obj);
+			}
+		}
+	}
+	
+}
+
+AActor* UObjectPoolComponent::CreateSingleObject()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = GetOwner();
+		SpawnParams.Instigator = GetOwner()->GetInstigator();
+
+		AActor* obj = World->SpawnActor<AActor>(pooledObjClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+		IPoolableInterface::Execute_Disable(obj);
+		_objects.Add(obj);
+		return obj;
+	}
+	return nullptr;
+}
+
+AActor* UObjectPoolComponent::SpawnObject()
+{
+	for (AActor* obj : _objects)
+	{
+		if (obj->IsHidden())
+		{
+			IPoolableInterface::Execute_Initialize(obj);
+			return obj;
+		}
+	}
+
+	return CreateSingleObject();
 }
 

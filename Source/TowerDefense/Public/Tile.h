@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Math/IntPoint.h"
 #include "Helpers/InteractableInterface.h"
+#include "Towers/TowerBase.h"
+#include "Enemies/EnemyAICharacter.h"
 #include "Tile.generated.h"
 
 UCLASS()
@@ -21,31 +23,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	///////////////
-	// functions //
-	///////////////
-	UFUNCTION()
-	FIntPoint GetGridPos();
-
-	UFUNCTION()
-	void SetGridPos(int row, int col);
-
-	UFUNCTION()
-	void Initialize(int row, int col, float targetSideLength);
-
-	void OnClick_Implementation() override;
-
-	void OnHoverStart_Implementation() override;
-
-	void OnHoverStop_Implementation() override;
-
-	///////////////
-	// variables //
-	///////////////
 	UPROPERTY(VisibleAnywhere)
 	FIntPoint gridPos;
 
@@ -57,4 +34,69 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* tileMeshComponent;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UMaterialInstanceDynamic* tileMaterialInstance;
+
+	UPROPERTY(VisibleAnywhere)
+	FLinearColor defaultColor;
+
+	UPROPERTY(VisibleAnywhere)
+	bool canBuildOn = true;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FString, AActor*> occupantsMap;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	///////////////
+	// functions //
+	///////////////
+	UFUNCTION()
+	FIntPoint GetGridPos();
+
+	//Set up
+	UFUNCTION()
+	void SetGridPos(int row, int col);
+
+	UFUNCTION()
+	void Initialize(int row, int col, float targetSideLength);
+
+	UFUNCTION()
+	void SetMaterialInstance(UMaterial* masterMaterial);
+
+	//Interface functions
+	void OnClick_Implementation() override;
+
+	void OnHoverStart_Implementation() override;
+
+	void OnHoverStop_Implementation() override;
+
+	// utilities
+	UFUNCTION()
+	void SetMaterialColor(FLinearColor newColor);
+
+	UFUNCTION()
+	int GetNumOccupants();
+
+	UFUNCTION()
+	void AddOccupant(AActor* newOccupant);
+
+	UFUNCTION()
+	void RemoveOccupant(AActor* leavingOccupant);
+
+	UFUNCTION()
+	void SetCanBuildOn(bool canBuild);
+
+	UFUNCTION()
+	bool GetCanBuildOn();
+
+	UFUNCTION()
+	bool CheckForTowerOccupant();
+
+	UFUNCTION()
+	bool CheckForEnemyOccupant();
+	
 };

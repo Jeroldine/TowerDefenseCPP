@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Towers/TowerBase.h"
+#include "Helpers/ObjectPoolComponent.h"
+#include "Helpers/PoolableInterface.h"
 #include "TowerManager.generated.h"
 
 UCLASS()
@@ -19,8 +22,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<UClass*, UObjectPoolComponent*> objectPoolComponents;
+
+	UFUNCTION()
+	void GatherObjectPools();
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	AActor* RequestTower(TSubclassOf<ATowerBase> towerType);
 
 };

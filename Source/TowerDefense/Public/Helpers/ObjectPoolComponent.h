@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Helpers/PoolableInterface.h"
 #include "ObjectPoolComponent.generated.h"
 
 
@@ -20,9 +21,29 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	///////////////
+	// variables //
+	///////////////
+
+	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "PoolableInterface"))
+	TSubclassOf<AActor> pooledObjClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	int numObjects = 10;
+	
+	UPROPERTY(VisibleAnywhere)
+	TArray<AActor*> _objects;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	UFUNCTION()
+	UClass* GetObjectClass();
+
+	void Initialize();
+
+	AActor* CreateSingleObject();
+
+	AActor* SpawnObject();
 };

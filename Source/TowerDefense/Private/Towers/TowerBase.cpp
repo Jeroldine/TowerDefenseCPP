@@ -31,6 +31,17 @@ void ATowerBase::BeginPlay()
 	
 }
 
+void ATowerBase::ResetTower()
+{
+	currentLevel = 0;
+	isPlaced = false;
+	
+	for (int i = 0; i < investedResources.Num(); i++)
+	{
+		investedResources[i] = 0;
+	}
+}
+
 void ATowerBase::BuildTower()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Build Tower"));
@@ -65,14 +76,23 @@ void ATowerBase::Tick(float DeltaTime)
 bool ATowerBase::Initialize_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Initialize implementation"));
-	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
+
+	SetActorLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
+	SetActorHiddenInGame(false);
+
 	return true;
 }
 
 bool ATowerBase::Disable_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Disable implementation"));
+
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
+	towerMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	ResetTower();
+
 	return true;
 }
 
@@ -81,4 +101,19 @@ bool ATowerBase::Activate_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Activate implementation"));
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	return true;
+}
+
+void ATowerBase::OnClick_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnClick implementation"));
+}
+
+void ATowerBase::OnHoverStart_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnHoverStart implementation"));
+}
+
+void ATowerBase::OnHoverStop_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("TowerBase OnHoverStop implementation"));
 }

@@ -2,6 +2,8 @@
 
 
 #include "TDPlayer.h"
+#include "DrawDebugHelpers.h"
+#include "Helpers/InteractableInterface.h"
 
 // Sets default values
 ATDPlayer::ATDPlayer()
@@ -81,6 +83,7 @@ void ATDPlayer::SetUpCameraBounds()
 void ATDPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CheckMouseOverActor();
 	CameraFollow();
 }
 
@@ -140,5 +143,160 @@ void ATDPlayer::ZoomCamera(float Value)
 {
 	FVector direction = TDCameraComponent->GetForwardVector();
 	AddMovementInput(direction, Value);
+}
+
+void ATDPlayer::CheckMouseOverActor()
+{
+	// Get the mouse position
+	float MouseX, MouseY;
+	if (PC->GetMousePosition(MouseX, MouseY))
+	{
+		FVector WorldLocation, WorldDirection;
+		// Convert screen position to world space direction
+		if (PC->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldLocation, WorldDirection))
+		{
+			FVector Start = WorldLocation;
+			FVector End = Start + (WorldDirection * 10000.0f); // Line trace distance
+
+			FHitResult HitResult;
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActor(PC->GetPawn()); // Ignore the player itself
+
+			// Perform the line trace
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+			{
+				AActor* hitActor = HitResult.GetActor();
+				IInteractableInterface* interactInterface = Cast<IInteractableInterface>(hitActor);
+
+				if (hitActor && interactInterface) // check if the actor I hit has the InteractableInterface
+				{
+					if (hitActor != currentHoveredOverActor) // only do something if the hit actor is different than current 
+					{
+						GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
+						// Handle OnHoverStop 
+						if (currentHoveredOverActor)
+							IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
+
+						// hover over logic
+						currentHoveredOverActor = hitActor;
+						IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
+
+						// secondary actions
+						ATile* currentTile = Cast<ATile>(currentHoveredOverActor);
+
+						if (currentTile) // always change tile colour
+						{
+							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Changing Tile colour"));
+							currentTile->SetMaterialColor(ChooseTileColor(currentTile));
+						}
+							
+						if (selectedTower && currentTile) // in build mode trying to build tower
+						{
+							selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
+							// flood fill to determine if can build
+						}
+					}					
+				}
+				else // actor does not have the interface
+				{
+					if (currentHoveredOverActor)
+						IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
+
+					currentHoveredOverActor = nullptr;
+				}
+			}
+			else // didn't hit anything
+			{
+				currentHoveredOverActor = nullptr;
+			}
+		}
+	}
+}
+
+void ATDPlayer::OnMouseClicked()
+{
+
+}
+
+FLinearColor ATDPlayer::ChooseTileColor(ATile* tile)
+{
+	if (!tile) return FLinearColor();
+
+	if (inBuildMode) 
+	{
+		if (tile->GetCanBuildOn() && tile->GetNumOccupants() == 0) // blue if can build on tile and no occupants
+			return buildColour;
+		else
+			return destroyColour; // red if can't build or occupants		
+	}
+	else if (inDestroyMode)
+	{
+		if (tile->CheckForTowerOccupant()) // red if building in occupants
+			return destroyColour;
+		else
+			return highlightColour; // white if no building in occupants 
+	}
+	else
+	{
+		if (tile->CheckForTowerOccupant()) // orange if tower
+			return upgradeColour;
+		else
+			return highlightColour; // white if no tower
+	}
+
+	return FLinearColor();
+}
+
+void ATDPlayer::RetrieveTower(UClass* towerClass)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("asking for tower"));
+
+	ReturnTower();
+
+	ATowerManager* towerManager = Cast<ATowerManager>(UGameplayStatics::GetActorOfClass(this, ATowerManager::StaticClass()));
+	selectedTower = Cast<ATowerBase>(towerManager->RequestTower(towerClass));
+}
+
+bool ATDPlayer::GetInBuildMode()
+{
+	return inBuildMode;
+}
+
+bool ATDPlayer::GetInDestroyMode()
+{
+	return inDestroyMode;
+}
+
+void ATDPlayer::EnterBuildMode()
+{
+	SetModes(true, false);
+
+}
+
+void ATDPlayer::EnterDestroyMode()
+{
+	SetModes(false, true);
+	ReturnTower();
+}
+
+void ATDPlayer::ExitAllModes()
+{
+	SetModes(false, false);
+	ReturnTower();
+}
+
+void ATDPlayer::SetModes(bool buildMode, bool destroyMode)
+{
+	inBuildMode = buildMode;
+	inDestroyMode = destroyMode;
+}
+
+void ATDPlayer::ReturnTower()
+{
+	if (selectedTower)
+	{
+		IPoolableInterface::Execute_Disable(selectedTower);
+		selectedTower = nullptr;
+	}
 }
 

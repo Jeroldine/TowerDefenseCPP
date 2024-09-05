@@ -7,7 +7,7 @@
 #include "HealthComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(meta=(BlueprintSpawnableComponent) )
 class TOWERDEFENSE_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -48,5 +48,9 @@ public:
 	float GetHealth();
 
 	float GetNormalizedHealth();
+
+	void SetHealth(float amount);
+
+	void ResetHealth();
 		
 };

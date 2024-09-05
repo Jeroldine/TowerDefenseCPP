@@ -34,10 +34,6 @@ public:
 	// Functions //
 	///////////////
 
-	//void OnStartPressed();
-
-	//void OnQuitPressed();
-
 	///////////////
 	// Varaibles //
 	///////////////

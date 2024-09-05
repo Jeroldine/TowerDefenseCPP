@@ -20,6 +20,73 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// variables
+	
+	// actual
+	UPROPERTY(VisibleAnywhere, Category = Dimensions)
+	int actualGridRows = 8;
+
+	UPROPERTY(VisibleAnywhere, Category = Dimensions)
+	int actualGridCols = 16;
+
+	UPROPERTY(VisibleAnywhere, Category = Dimensions)
+	float actualTileSize = 200.0f;
+	
+	// defaults
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int defaultGridRows = 8;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int defaultGridCols = 16;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	float defaultTileSize = 200.0f;
+
+	// min/max rows
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minGridRows = 5;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxGridRows = 50;
+
+	//min/max cols
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minGridCols = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxGridCols = 100;
+
+	// min/max tileSize
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int minTileSize = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Dimensions)
+	int maxTileSize = 400.0f;
+
+	// start and goal
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint startTilePos;
+
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint goalTilePos;
+
+	// master tile material 
+	UPROPERTY(EditDefaultsOnly, Category = Materials)
+	UMaterial* tileMaterialMaster;
+
+	// data storage
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, ATile*> mapOfTiles;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, int32> groundTowerPlacementMap;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, int32> undergroundTowerPlacementMap;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, int32> aerialTowerPlacementMap;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,4 +99,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ATile> tileClass;
+
+// functions
+	UFUNCTION()
+	void ValidateDimensions(int row, int cols, float size);
+
+	UFUNCTION()
+	void SetStartGoal(FIntPoint start, FIntPoint goal);
+
+	UFUNCTION()
+	FIntPoint GetGoalTilePos();
+
+	UFUNCTION()
+	FIntPoint GetStartTilePos();
 };
