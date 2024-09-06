@@ -107,6 +107,9 @@ public:
 	UFUNCTION()
 	void ReturnTower();
 
+	UFUNCTION()
+	void ResetActor();
+
 	///////////////
 	// variables //
 	///////////////

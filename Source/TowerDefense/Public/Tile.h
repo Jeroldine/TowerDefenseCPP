@@ -99,4 +99,6 @@ public:
 	UFUNCTION()
 	bool CheckForEnemyOccupant();
 	
+	UFUNCTION()
+	void ResetActor();
 };

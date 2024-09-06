@@ -8,7 +8,9 @@
 #include "Managers/TowerManager.h"
 #include "Managers/EnemyManager.h"
 #include "Fortress.h"
+#include "TDPlayer.h"
 #include "Math/IntPoint.h"
+#include "Kismet/GameplayStatics.h"
 #include "TowerDefenseGameModeBase.generated.h"
 
 /**
@@ -48,6 +50,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	AFortress* fortressRef;
 
+	UPROPERTY(VisibleAnywhere)
+	ATDPlayer* playerRef;
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	int numGridRows = 7;
@@ -83,4 +88,7 @@ public:
 
 	UFUNCTION()
 	void ResetGame();
+
+	UFUNCTION()
+	void RestartGame();
 };

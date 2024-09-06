@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "GUI/Menus/BaseMenuWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "TowerDefenseHUD.generated.h"
 
 /**

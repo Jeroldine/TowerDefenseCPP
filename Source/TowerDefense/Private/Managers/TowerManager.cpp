@@ -54,3 +54,11 @@ AActor* ATowerManager::RequestTower(TSubclassOf<ATowerBase> towerType)
 	return objPool->SpawnObject();
 }
 
+void ATowerManager::StartGamePlay()
+{
+}
+
+void ATowerManager::ResetActor()
+{
+}
+

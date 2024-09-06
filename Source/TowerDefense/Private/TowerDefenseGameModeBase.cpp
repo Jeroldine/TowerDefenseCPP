@@ -156,10 +156,40 @@ void ATowerDefenseGameModeBase::SpawnFortress()
 
 void ATowerDefenseGameModeBase::StartGame()
 {
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Starting Gameplay"));
     // trigger gameplay
+    if (enemyManagerRef)
+        enemyManagerRef->StartGamePlay();
+    
+    if (fortressRef)
+        fortressRef->StartGamePlay();
+
+    if (!playerRef)
+        playerRef = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
 }
 
 void ATowerDefenseGameModeBase::ResetGame()
 {
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Resetting Actors"));
     // reset variables
+    if (gridManagerRef)
+        gridManagerRef->ResetActor();
+
+    if (towerManagerRef)
+        towerManagerRef->ResetActor();
+
+    if (enemyManagerRef)
+        enemyManagerRef->ResetActor();
+
+    if (fortressRef)
+        fortressRef->ResetActor();
+
+    if (playerRef)
+        playerRef->ResetActor();
+}
+
+void ATowerDefenseGameModeBase::RestartGame()
+{
+    ResetGame();
+    StartGame();
 }

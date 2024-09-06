@@ -46,6 +46,7 @@ void UObjectPoolComponent::Initialize()
 		if (World)
 		{
 			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 			SpawnParams.Owner = GetOwner();
 			SpawnParams.Instigator = GetOwner()->GetInstigator();
 

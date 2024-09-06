@@ -112,4 +112,10 @@ public:
 
 	UFUNCTION()
 	FIntPoint GetStartTilePos();
+
+	UFUNCTION()
+	void StartGamePlay();
+
+	UFUNCTION()
+	void ResetActor();
 };

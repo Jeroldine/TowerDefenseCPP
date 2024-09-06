@@ -300,3 +300,7 @@ void ATDPlayer::ReturnTower()
 	}
 }
 
+void ATDPlayer::ResetActor()
+{
+}
+

@@ -124,3 +124,11 @@ FIntPoint AGridManager::GetStartTilePos()
 {
 	return startTilePos;
 }
+
+void AGridManager::StartGamePlay()
+{
+}
+
+void AGridManager::ResetActor()
+{
+}

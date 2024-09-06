@@ -138,6 +138,11 @@ bool ATile::CheckForEnemyOccupant()
 	return false;
 }
 
+void ATile::ResetActor()
+{
+
+}
+
 void ATile::OnClick_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Tile OnClick implementation"));

@@ -6,10 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Helpers/HealthComponent.h"
 #include "Components/BoxComponent.h"
-#include "Enemies/EnemyAICharacter.h"
 #include "Kismet/GameplayStatics.h"
-#include "GUI/Menus/GameMenuWidget.h"
-#include "GUI/TowerDefenseHUD.h"
 #include "Helpers/PoolableInterface.h"
 #include "Fortress.generated.h"
 
@@ -50,6 +47,9 @@ public:
 
 	UFUNCTION()
 	void StartGamePlay();
+
+	UFUNCTION()
+	void ResetActor();
 
 	UFUNCTION()
 	void UpdatePlayerHUD();

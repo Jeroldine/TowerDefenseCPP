@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Enemies/EnemyAICharacter.h"
+#include "Helpers/ObjectPoolComponent.h"
+#include "Helpers/PoolableInterface.h"
 #include "EnemyManager.generated.h"
 
 UCLASS()
@@ -19,8 +22,29 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	///////////////
+	// Functions //
+	///////////////
+
+	//UFUNCTION()
+	//void Spawn
+
+	///////////////
+	// Variables //
+	///////////////
+
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//functions
+
+	UFUNCTION()
+	void StartGamePlay();
+
+	UFUNCTION()
+	void ResetActor();
 
 };

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Helpers/PoolableInterface.h"
 #include "EnemyAICharacter.generated.h"
 
-UCLASS()
-class TOWERDEFENSE_API AEnemyAICharacter : public ACharacter
+UCLASS(Blueprintable)
+class TOWERDEFENSE_API AEnemyAICharacter : public ACharacter, public IPoolableInterface
 {
 	GENERATED_BODY()
 
@@ -32,4 +33,10 @@ public:
 	UFUNCTION()
 	float GetDamageAmount();
 
+	// IPoolableInterface functions
+	bool Initialize_Implementation() override;
+
+	bool Disable_Implementation() override;
+
+	bool Activate_Implementation() override;
 };

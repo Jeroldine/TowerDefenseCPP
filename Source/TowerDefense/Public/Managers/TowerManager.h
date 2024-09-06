@@ -35,4 +35,10 @@ public:
 	UFUNCTION()
 	AActor* RequestTower(TSubclassOf<ATowerBase> towerType);
 
+	UFUNCTION()
+	void StartGamePlay();
+
+	UFUNCTION()
+	void ResetActor();
+
 };

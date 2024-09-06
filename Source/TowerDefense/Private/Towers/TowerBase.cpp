@@ -87,8 +87,8 @@ bool ATowerBase::Disable_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Disable implementation"));
 
-	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	towerMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 	ResetTower();

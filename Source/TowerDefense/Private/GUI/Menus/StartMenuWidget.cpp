@@ -21,7 +21,6 @@ void UStartMenuWidget::InitScreen()
 	if (towerDefHUD)
 	{
 		startButton->Button->OnClicked.AddDynamic(towerDefHUD, &ATowerDefenseHUD::ShowGameMenu);
-		//startButton->Button->OnClicked.AddDynamic(this, &UStartMenuWidget::OnStartPressed);
 		quitButton->Button->OnClicked.AddDynamic(towerDefHUD, &ATowerDefenseHUD::QuitGame);
 	}
 	

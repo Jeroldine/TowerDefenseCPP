@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Fortress.h"
+#include "GUI/TowerDefenseHUD.h"
+#include "Enemies/EnemyAICharacter.h"
+#include "GUI/Menus/GameMenuWidget.h"
 
 // Sets default values
 AFortress::AFortress()
@@ -99,6 +101,10 @@ void AFortress::EndGame()
 void AFortress::StartGamePlay()
 {
 	isAlive = true;
+}
+
+void AFortress::ResetActor()
+{
 }
 
 void AFortress::UpdatePlayerHUD()
