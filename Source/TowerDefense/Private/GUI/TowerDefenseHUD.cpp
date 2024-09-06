@@ -2,6 +2,7 @@
 
 #include "GUI/TowerDefenseHUD.h"
 #include "TowerDefenseGameModeBase.h"
+#include "GUI/Menus/GameMenuWidget.h"
 
 void ATowerDefenseHUD::BeginPlay()
 {
@@ -20,6 +21,7 @@ void ATowerDefenseHUD::DrawHUD()
 void ATowerDefenseHUD::ShowMenu(TSubclassOf<UBaseMenuWidget> newGameMenu)
 {
 	if (currentMenu) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("TDHUD removing current menu")));
 		currentMenu->RemoveFromParent();
 		currentMenu = nullptr;
 	}
@@ -34,8 +36,8 @@ void ATowerDefenseHUD::ShowStartMenu()
 {
 	ShowMenu(startMenu);
 	ATowerDefenseGameModeBase* TDGameMode = Cast<ATowerDefenseGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (TDGameMode)
-		TDGameMode->ResetGame();
+	/*if (TDGameMode)
+		TDGameMode->ResetGame();*/
 }
 
 void ATowerDefenseHUD::ShowGameMenu()
@@ -43,7 +45,7 @@ void ATowerDefenseHUD::ShowGameMenu()
 	ShowMenu(gameHUD);
 
 	// start start everything get gamemode
-	ATowerDefenseGameModeBase* TDGameMode= Cast<ATowerDefenseGameModeBase>(UGameplayStatics::GetGameMode(this));
+	ATowerDefenseGameModeBase* TDGameMode = Cast<ATowerDefenseGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (TDGameMode)
 		TDGameMode->RestartGame();
 }

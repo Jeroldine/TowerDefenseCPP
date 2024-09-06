@@ -49,4 +49,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void QuitGame();
+
 };

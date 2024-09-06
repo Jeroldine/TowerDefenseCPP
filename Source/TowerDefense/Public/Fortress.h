@@ -51,6 +51,8 @@ public:
 	UFUNCTION()
 	void ResetActor();
 
+	void TestDamage(float dt);
+
 	UFUNCTION()
 	void UpdatePlayerHUD();
 };

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Fortress.h"
+#include "TowerDefenseGameModeBase.h"
 #include "GUI/TowerDefenseHUD.h"
 #include "Enemies/EnemyAICharacter.h"
 #include "GUI/Menus/GameMenuWidget.h"
@@ -41,8 +42,8 @@ void AFortress::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-
+	// test function for damage
+	TestDamage(DeltaTime);
 }
 
 void AFortress::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -68,11 +69,7 @@ void AFortress::OnOverlap(AActor* OtherActor)
 		//IPoolableInterface::Execute_Disable(enemy);
 
 		// update healthbar
-		UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(UGameplayStatics::GetActorOfClass(this, UGameMenuWidget::StaticClass()));
-		if (gameMenu)
-		{
-			gameMenu->UpdateHealthBar(healthComponent->GetNormalizedHealth());
-		}
+		UpdatePlayerHUD();
 
 		// check if dead
 		if (healthComponent->GetHealth() <= 0)
@@ -87,15 +84,15 @@ void AFortress::OnOverlap(AActor* OtherActor)
 	}
 }
 
-
-
 void AFortress::EndGame()
 {
 	// update HUD
 	ATowerDefenseHUD* TDHUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ATowerDefenseHUD>();
 	if (TDHUD) TDHUD->ShowGameOverMenu();
 
-	// call game mode End game
+	isAlive = false;
+
+	// call game mode End game?
 }
 
 void AFortress::StartGamePlay()
@@ -105,6 +102,22 @@ void AFortress::StartGamePlay()
 
 void AFortress::ResetActor()
 {
+	isAlive = false;
+	healthComponent->ResetHealth();
+}
+
+void AFortress::TestDamage(float dt)
+{
+	if (!isAlive) return;
+	healthComponent->DecreaseHealth(dt * 10.0f);
+	UpdatePlayerHUD();
+
+	// check if dead
+	if (healthComponent->GetHealth() <= 0)
+	{
+		EndGame();
+	}
+	
 }
 
 void AFortress::UpdatePlayerHUD()
@@ -112,25 +125,8 @@ void AFortress::UpdatePlayerHUD()
 	ATowerDefenseHUD* TDHUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ATowerDefenseHUD>();
 	if (TDHUD)
 	{
-		
-	}
-
-	UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(UGameplayStatics::GetActorOfClass(this, UGameMenuWidget::StaticClass()));
-	if (gameMenu)
-	{
-		gameMenu->UpdateHealthBar(healthComponent->GetNormalizedHealth());
+		UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(TDHUD->currentMenu);
+		if (gameMenu)
+			gameMenu->UpdateHealthBar(healthComponent->GetNormalizedHealth());
 	}
 }
-
-//void AFortress::DamageSelf(float dt)
-//{
-//	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Fortress Damaged Self"));
-//	healthComponent->DecreaseHealth(dt * 10.0f);
-//	UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(UGameplayStatics::GetActorOfClass(this, UGameMenuWidget::StaticClass()));
-//	if (gameMenu)
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Update healthBar"));
-//		gameMenu->UpdateHealthBar(healthComponent->GetNormalizedHealth());
-//	}
-//}
-
