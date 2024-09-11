@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "TDPlayer.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.generated.h"
 
 /**
@@ -23,5 +25,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* startingBT;
+
+	
+	///////////////
+	// Functions //
+	///////////////
 	
 };

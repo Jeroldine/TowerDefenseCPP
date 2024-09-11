@@ -88,12 +88,9 @@ void ATile::AddOccupant(AActor* newOccupant)
 	occupantsMap.Add(actorName, newOccupant);
 }
 
-void ATile::RemoveOccupant(AActor* leavingOccupant)
+void ATile::RemoveOccupant(FString leavingOccupantName)
 {
-	FString actorName;
-	leavingOccupant->GetName(actorName);
-
-	occupantsMap.Remove(actorName);
+	occupantsMap.Remove(leavingOccupantName);
 }
 
 void ATile::SetCanBuildOn(bool canBuild)
@@ -118,7 +115,6 @@ bool ATile::CheckForTowerOccupant()
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -134,13 +130,36 @@ bool ATile::CheckForEnemyOccupant()
 			return true;
 		}
 	}
-
 	return false;
 }
 
 void ATile::ResetActor()
 {
+	canBuildOn = true;
+	
+	occupantsMap.Empty(3);
 
+	tileMaterialInstance->SetVectorParameterValue(FName("BaseColor"), defaultColor);
+}
+
+TArray<FIntPoint> ATile::GetNeighbors()
+{
+	return neighborsArray;
+}
+
+void ATile::SetNeighbors(int maxRows, int maxCols)
+{
+	if (gridPos.X - 1 > 0) // if tile below is valied
+		neighborsArray.Add(FIntPoint(gridPos.X - 1, gridPos.Y));
+
+	if (gridPos.X + 1 < maxRows) // if tile above is valid
+		neighborsArray.Add(FIntPoint(gridPos.X + 1, gridPos.Y));
+
+	if (gridPos.Y - 1 > 0) // if tile to left is valid
+		neighborsArray.Add(FIntPoint(gridPos.X, gridPos.Y - 1));
+
+	if (gridPos.Y + 1 < maxCols) // if tile to right is valid
+		neighborsArray.Add(FIntPoint(gridPos.X, gridPos.Y + 1));
 }
 
 void ATile::OnClick_Implementation()

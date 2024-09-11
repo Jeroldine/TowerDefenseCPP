@@ -6,6 +6,7 @@
 AEnemyAIController::AEnemyAIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void AEnemyAIController::BeginPlay()
@@ -13,4 +14,5 @@ void AEnemyAIController::BeginPlay()
 	Super::BeginPlay();
 
 	RunBehaviorTree(startingBT);
+
 }

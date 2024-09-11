@@ -136,6 +136,10 @@ void ATowerDefenseGameModeBase::SpawnFortress()
             float xLoc = (gridManagerRef->GetGoalTilePos()[0]) * tileSize;
             float yLoc = -(tileSize) * 1.2f;
             FVector spawnLoc = FVector(xLoc, yLoc, 0.0f);
+
+            // set position in gridmanager
+            gridManagerRef->SetFortressPos(spawnLoc);
+
             fortressRef = World->SpawnActor<AFortress>(FortressClass, spawnLoc, FRotator(0, 0, 0), SpawnParams);
 
             if (fortressRef)

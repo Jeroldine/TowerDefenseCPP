@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<FString, AActor*> occupantsMap;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<FIntPoint> neighborsArray;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -85,7 +88,7 @@ public:
 	void AddOccupant(AActor* newOccupant);
 
 	UFUNCTION()
-	void RemoveOccupant(AActor* leavingOccupant);
+	void RemoveOccupant(FString leavingOccupantName);
 
 	UFUNCTION()
 	void SetCanBuildOn(bool canBuild);
@@ -101,4 +104,11 @@ public:
 	
 	UFUNCTION()
 	void ResetActor();
+
+	UFUNCTION()
+	TArray<FIntPoint> GetNeighbors();
+
+	UFUNCTION()
+	void SetNeighbors(int maxRows, int maxCols);
+
 };

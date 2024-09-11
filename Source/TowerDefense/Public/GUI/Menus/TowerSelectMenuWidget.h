@@ -34,12 +34,6 @@ protected:
 
 	void InitScreen() override;
 
-	/*UPROPERTY(meta = (BindWidget))
-	UTowerButtonWidget* towerGButton;*/
-
-	/*UPROPERTY(meta = (BindWidget))
-	UVerticalBox* buttonContainer;*/
-
 	UPROPERTY(meta = (BindWidget))
 	UGridPanel* buttonContainer;
 

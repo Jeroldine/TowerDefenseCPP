@@ -20,7 +20,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// variables
+	///////////////
+	// variables //
+	///////////////
 	
 	// actual
 	UPROPERTY(VisibleAnywhere, Category = Dimensions)
@@ -70,6 +72,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	FIntPoint goalTilePos;
 
+	UPROPERTY(VisibleAnywhere)
+	FVector fortressPos;
+
 	// master tile material 
 	UPROPERTY(EditDefaultsOnly, Category = Materials)
 	UMaterial* tileMaterialMaster;
@@ -79,13 +84,23 @@ protected:
 	TMap<FIntPoint, ATile*> mapOfTiles;
 
 	UPROPERTY(VisibleAnywhere)
-	TMap<FIntPoint, int32> groundTowerPlacementMap;
+	TMap<FIntPoint, int> groundTowerPlacementMap;
 
 	UPROPERTY(VisibleAnywhere)
-	TMap<FIntPoint, int32> undergroundTowerPlacementMap;
+	TMap<FIntPoint, int> undergroundTowerPlacementMap;
 
 	UPROPERTY(VisibleAnywhere)
-	TMap<FIntPoint, int32> aerialTowerPlacementMap;
+	TMap<FIntPoint, int> aerialTowerPlacementMap;
+
+	// direction weights
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, float> groundDamageMap;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, float> undergroundDamageMap;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FIntPoint, float> aerialDamageMap;
 
 public:	
 	// Called every frame
@@ -106,6 +121,9 @@ public:
 
 	UFUNCTION()
 	void SetStartGoal(FIntPoint start, FIntPoint goal);
+
+	UFUNCTION()
+	void SetFortressPos(FVector pos);
 
 	UFUNCTION()
 	FIntPoint GetGoalTilePos();

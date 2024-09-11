@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Helpers/HealthComponent.h"
 #include "Helpers/PoolableInterface.h"
 #include "EnemyAICharacter.generated.h"
 
@@ -20,8 +21,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// variables
+	///////////////
+	// Variables //
+	///////////////
+	UPROPERTY(EditDefaultsOnly)
+	UHealthComponent* healthComponent;
+
+	UPROPERTY(EditDefaultsOnly)
 	float dmgAmount = 10.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FVector> pathPoints;
+
+	UPROPERTY(EditDefaultsOnly)
+	int currentPathIndex = -1;
 
 public:	
 	// Called every frame
@@ -30,8 +43,24 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	///////////////
+	// Variables //
+	///////////////
+
+
+
+	///////////////
+	// Functions //
+	///////////////
+
 	UFUNCTION()
 	float GetDamageAmount();
+
+	UFUNCTION()
+	FVector GetNextPointOnPath();
+
+	UFUNCTION()
+	void RequestNewPath();
 
 	// IPoolableInterface functions
 	bool Initialize_Implementation() override;

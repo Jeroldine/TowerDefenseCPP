@@ -67,9 +67,8 @@ ATile* AGridManager::SpawnSingleTile(int row, int col, float targetSideLength)
 
 		if (tile)
 		{
-			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Single tile spawned."));
-			//tile->SetGridPos(row, col);
 			tile->Initialize(row, col, targetSideLength);
+			tile->SetNeighbors(actualGridRows, actualGridCols);
 			return tile;
 		}
 		else
@@ -108,11 +107,13 @@ void AGridManager::SetStartGoal(FIntPoint start, FIntPoint goal)
 	}	
 
 	// set tiles as cannot build
-	ATile* startTile = *mapOfTiles.Find(startTilePos);
-	startTile->SetCanBuildOn(false);
+	(*mapOfTiles.Find(startTilePos))->SetCanBuildOn(false);
+	(*mapOfTiles.Find(goalTilePos))->SetCanBuildOn(false);
+}
 
-	ATile* goalTile = *mapOfTiles.Find(goalTilePos);
-	goalTile->SetCanBuildOn(false);
+void AGridManager::SetFortressPos(FVector pos)
+{
+	fortressPos = pos;
 }
 
 FIntPoint AGridManager::GetGoalTilePos()
@@ -131,4 +132,33 @@ void AGridManager::StartGamePlay()
 
 void AGridManager::ResetActor()
 {
+	// reset each tile
+	TArray<FIntPoint> keyArray;
+	mapOfTiles.GenerateKeyArray(keyArray);
+	for (FIntPoint key : keyArray)
+		(*mapOfTiles.Find(key))->ResetActor();
+
+	// set start and goal tiles as cannot build again
+	(*mapOfTiles.Find(startTilePos))->SetCanBuildOn(false);
+	(*mapOfTiles.Find(goalTilePos))->SetCanBuildOn(false);
+
+	// reset data: placement maps
+	for (TPair<FIntPoint, int>& Pair : groundTowerPlacementMap)
+		Pair.Value = 0;
+
+	for (TPair<FIntPoint, int>& Pair : undergroundTowerPlacementMap)
+		Pair.Value = 0;
+
+	for (TPair<FIntPoint, int>& Pair : aerialTowerPlacementMap)
+		Pair.Value = 0;
+
+	// reset data: damage maps
+	for (TPair<FIntPoint, float>& Pair : groundDamageMap)
+		Pair.Value = 0.0f;
+
+	for (TPair<FIntPoint, float>& Pair : undergroundDamageMap)
+		Pair.Value = 0.0f;
+
+	for (TPair<FIntPoint, float>& Pair : aerialDamageMap)
+		Pair.Value = 0.0f;
 }
