@@ -88,7 +88,7 @@ public:
 	void AddOccupant(AActor* newOccupant);
 
 	UFUNCTION()
-	void RemoveOccupant(FString leavingOccupantName);
+	void RemoveOccupant(AActor* leavingOccupantName);
 
 	UFUNCTION()
 	void SetCanBuildOn(bool canBuild);

@@ -8,6 +8,8 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Helpers/PoolableInterface.h"
+#include "GUI/TowerDefenseHUD.h"
+#include "GridManager.h"
 #include "Managers/TowerManager.h"
 #include "Towers/TowerBase.h"
 #include "Tile.h"
@@ -50,7 +52,25 @@ protected:
 	void CheckMouseOverActor();
 
 	UFUNCTION()
-	void OnMouseClicked();
+	void StorePressedActor();
+
+	UFUNCTION()
+	void ChooseMouseClickAction();
+
+	UFUNCTION()
+	bool CheckMaterialRequirement(FLevelRequirements materialReqs);
+
+	UFUNCTION()
+	void UpdateMaterials(TArray<int> incomingMatls, bool AddMaterials = false);
+
+	UFUNCTION()
+	void HandleMouseOver(AActor* hitActor);
+
+	UFUNCTION()
+	ATile* RequestTile(FIntPoint pos);
+
+	UFUNCTION()
+	void UpdateGridManagerData();
 
 	// Utilities
 	UFUNCTION()
@@ -59,9 +79,20 @@ protected:
 	///////////////
 	// variables //
 	///////////////
+	
+	// resources
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> currentMaterials = { 0, 0, 0, 0 };
+
+	// cached objects that I interact with
+	UPROPERTY()
+	AActor* currentHoveredOverActor;
 
 	UPROPERTY(VisibleAnywhere)
 	ATowerBase* selectedTower;
+
+	UPROPERTY()
+	AActor* pressedActor;
 
 	UPROPERTY(VisibleAnywhere, Category = States)
 	bool inBuildMode = false;
@@ -108,7 +139,7 @@ public:
 	void ReturnTower();
 
 	UFUNCTION()
-	void ResetActor();
+	void ResetActor(TArray<int> startingMatls);
 
 	///////////////
 	// variables //
@@ -125,10 +156,6 @@ public:
 	// player controller
 	UPROPERTY(VisibleAnywhere)
 	APlayerController* PC;
-
-	// cached objects that I interact with
-	UPROPERTY()
-	AActor* currentHoveredOverActor;
 
 	// camera stuff
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Camera)
@@ -167,5 +194,5 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Colours)
 	FLinearColor destroyColour;
-
+	
 };

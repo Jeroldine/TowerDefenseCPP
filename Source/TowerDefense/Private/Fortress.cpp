@@ -43,7 +43,7 @@ void AFortress::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// test function for damage
-	TestDamage(DeltaTime);
+	//TestDamage(DeltaTime);
 }
 
 void AFortress::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -53,6 +53,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	ATDPlayer* playerRef;
 
+	// game flow
+	UFUNCTION()
+	void StartGame();
+
+	UFUNCTION()
+	void ResetGame();
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	int numGridRows = 7;
@@ -69,6 +76,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = GridManager)
 	FIntPoint goalTile;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> startingMaterials = { 1000, 0, 0, 0 };
+
 	// functions to spawn actors
 	UFUNCTION()
 	void SpawnGridManager(int rows, int cols, float sideLength);
@@ -83,11 +93,6 @@ public:
 	void SpawnFortress();
 
 	// game flow
-	UFUNCTION()
-	void StartGame();
-
-	UFUNCTION()
-	void ResetGame();
 
 	UFUNCTION()
 	void RestartGame();

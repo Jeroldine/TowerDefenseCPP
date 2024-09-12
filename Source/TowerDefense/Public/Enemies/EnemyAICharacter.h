@@ -30,11 +30,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float dmgAmount = 10.0f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TArray<FVector> pathPoints;
 
 	UPROPERTY(EditDefaultsOnly)
-	int currentPathIndex = -1;
+	int currentPathIndex = 0;
 
 public:	
 	// Called every frame

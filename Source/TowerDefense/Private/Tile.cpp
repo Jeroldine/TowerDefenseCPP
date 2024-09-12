@@ -88,9 +88,11 @@ void ATile::AddOccupant(AActor* newOccupant)
 	occupantsMap.Add(actorName, newOccupant);
 }
 
-void ATile::RemoveOccupant(FString leavingOccupantName)
+void ATile::RemoveOccupant(AActor* leavingOccupant)
 {
-	occupantsMap.Remove(leavingOccupantName);
+	FString actorName;
+	leavingOccupant->GetName(actorName);
+	occupantsMap.Remove(actorName);
 }
 
 void ATile::SetCanBuildOn(bool canBuild)
@@ -164,16 +166,15 @@ void ATile::SetNeighbors(int maxRows, int maxCols)
 
 void ATile::OnClick_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Tile OnClick implementation"));
+	
 }
 
 void ATile::OnHoverStart_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Tile OnHoverStart implementation"));
+	
 }
 
 void ATile::OnHoverStop_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Orange, TEXT("Tile OnHoverStop implementation"));
 	tileMaterialInstance->SetVectorParameterValue(FName("BaseColor"), defaultColor);
 }

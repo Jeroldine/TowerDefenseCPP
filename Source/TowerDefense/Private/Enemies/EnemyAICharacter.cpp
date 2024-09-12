@@ -2,6 +2,7 @@
 
 
 #include "Enemies/EnemyAICharacter.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AEnemyAICharacter::AEnemyAICharacter()
@@ -43,16 +44,21 @@ float AEnemyAICharacter::GetDamageAmount()
 
 FVector AEnemyAICharacter::GetNextPointOnPath()
 {
+	if (pathPoints.Num() == 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("No Path Points Given"));
+		return GetActorLocation();
+	}
+
 	if (currentPathIndex > pathPoints.Num())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("current Index klarger than number of points in path"));
-		return FVector(0, 0, -999);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("current Index larger than number of points in path"));
+		return FVector(0, 0, 0);
 	}
 	else if (currentPathIndex == pathPoints.Num())
 		return pathPoints[pathPoints.Num() - 1];
 	
-	currentPathIndex += 1;
-	return pathPoints[currentPathIndex];
+	return pathPoints[currentPathIndex++];
 }
 
 void AEnemyAICharacter::RequestNewPath()
@@ -70,6 +76,7 @@ bool AEnemyAICharacter::Disable_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("EnemyAICharacter Disable implementation"));
 
 	// get mesh and disable collisions
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);

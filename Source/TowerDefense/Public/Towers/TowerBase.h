@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Math/IntPoint.h"
 #include "Helpers/PoolableInterface.h"
 #include "Helpers/InteractableInterface.h"
 #include "TowerBase.generated.h"
@@ -55,13 +56,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool isPlaced = false;
 
+	UPROPERTY()
+	FIntPoint gridPos;
+
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* towerMeshComponent;
 
 	///////////////
 	// Functions //
 	///////////////
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void ResetTower();
 
 	UFUNCTION(BlueprintCallable)
@@ -73,6 +77,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void DestroyTower();
 
+	UFUNCTION(BlueprintCallable)
+	void AddToInvestedResources();
 
 public:	
 	// Called every frame
@@ -81,6 +87,23 @@ public:
 	///////////////
 	// Functions //
 	///////////////
+
+	UFUNCTION()
+	FIntPoint GetGridPos();
+
+	UFUNCTION()
+	void SetGridPos(FIntPoint pos);
+
+	UFUNCTION()
+	FLevelRequirements GetMaterialReqs();
+
+	UFUNCTION()
+	TArray<int> RecoverMaterials();
+
+	UFUNCTION()
+	bool GetIsPlaced();
+
+	// Poolable Interface Implementations
 	bool Initialize_Implementation() override;
 
 	bool Disable_Implementation() override;

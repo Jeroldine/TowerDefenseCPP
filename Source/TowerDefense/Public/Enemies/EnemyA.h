@@ -4,17 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Enemies/EnemyAICharacter.h"
-#include "EnemyG.generated.h"
+#include "EnemyA.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TOWERDEFENSE_API AEnemyG : public AEnemyAICharacter
+class TOWERDEFENSE_API AEnemyA : public AEnemyAICharacter
 {
 	GENERATED_BODY()
-
-//protected:
-//	void BeginPlay() override;
 	
 };

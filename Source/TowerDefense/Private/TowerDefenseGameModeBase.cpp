@@ -169,7 +169,11 @@ void ATowerDefenseGameModeBase::StartGame()
         fortressRef->StartGamePlay();
 
     if (!playerRef)
+    {
         playerRef = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
+        playerRef->ResetActor(startingMaterials);
+    }
+        
 }
 
 void ATowerDefenseGameModeBase::ResetGame()
@@ -189,7 +193,7 @@ void ATowerDefenseGameModeBase::ResetGame()
         fortressRef->ResetActor();
 
     if (playerRef)
-        playerRef->ResetActor();
+        playerRef->ResetActor(startingMaterials);
 }
 
 void ATowerDefenseGameModeBase::RestartGame()

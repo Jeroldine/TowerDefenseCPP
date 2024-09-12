@@ -44,7 +44,14 @@ void ATowerBase::ResetTower()
 
 void ATowerBase::BuildTower()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Build Tower"));
+	isPlaced = true;
+
+	for (int i = 0; i < investedResources.Num(); i++)
+	{
+		investedResources[i] = requiredResources[0][i];
+	}
+
+	currentLevel += 1;
 }
 
 void ATowerBase::UpgradeTower()
@@ -66,11 +73,44 @@ void ATowerBase::DestroyTower()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Destroy Tower"));
 }
 
+void ATowerBase::AddToInvestedResources()
+{
+}
+
 // Called every frame
 void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+FIntPoint ATowerBase::GetGridPos()
+{
+	return gridPos;
+}
+
+void ATowerBase::SetGridPos(FIntPoint pos)
+{
+	gridPos = pos;
+}
+
+FLevelRequirements ATowerBase::GetMaterialReqs()
+{
+	return requiredResources[currentLevel];
+}
+
+TArray<int> ATowerBase::RecoverMaterials()
+{
+	TArray<int> recoveredMatls = { 0, 0, 0, 0 };
+	for (int i = 0; i < investedResources.Num(); i++)
+		recoveredMatls[i] = investedResources[i] * resourceRecoveryExtent;
+
+	return recoveredMatls;
+}
+
+bool ATowerBase::GetIsPlaced()
+{
+	return isPlaced;
 }
 
 bool ATowerBase::Initialize_Implementation()
@@ -99,7 +139,12 @@ bool ATowerBase::Disable_Implementation()
 bool ATowerBase::Activate_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Activate implementation"));
-	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
+
+	towerMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetActorHiddenInGame(false);
+	SetActorTickEnabled(true);
+	BuildTower();
+	
 	return true;
 }
 

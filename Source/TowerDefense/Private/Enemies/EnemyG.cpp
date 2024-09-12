@@ -3,3 +3,7 @@
 
 #include "Enemies/EnemyG.h"
 
+//void AEnemyG::BeginPlay()
+//{
+//	Super::BeginPlay();
+//}

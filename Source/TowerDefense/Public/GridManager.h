@@ -132,6 +132,9 @@ public:
 	FIntPoint GetStartTilePos();
 
 	UFUNCTION()
+	ATile* GetTileAtPos(FIntPoint pos);
+
+	UFUNCTION()
 	void StartGamePlay();
 
 	UFUNCTION()

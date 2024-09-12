@@ -4,6 +4,7 @@
 #include "TDPlayer.h"
 #include "DrawDebugHelpers.h"
 #include "Helpers/InteractableInterface.h"
+#include "GUI/Menus/GameMenuWidget.h"
 
 // Sets default values
 ATDPlayer::ATDPlayer()
@@ -92,9 +93,136 @@ void ATDPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-
 	// Set up zoom bindings
 	PlayerInputComponent->BindAxis("ZoomCamera", this, &ATDPlayer::ZoomCamera);
+
+	// Set up player click binding
+	PlayerInputComponent->BindAction("MouseClick", IE_Pressed, this, &ATDPlayer::StorePressedActor);
+	PlayerInputComponent->BindAction("MouseClick", IE_Released, this, &ATDPlayer::ChooseMouseClickAction);
+}
+
+void ATDPlayer::StorePressedActor()
+{
+	if (currentHoveredOverActor)
+		pressedActor = currentHoveredOverActor;
+}
+
+void ATDPlayer::ChooseMouseClickAction()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Mouse click released"));
+	// if not hovering over anthing clicking won't do anything
+	if (!currentHoveredOverActor) return;
+
+	// if hovering over a tile with a selected tower -> see if you can build
+	if (selectedTower)
+	{
+		ATile* pressedTile = Cast<ATile>(pressedActor);
+		ATile* hoveredTile = Cast<ATile>(currentHoveredOverActor);
+
+		// check if pressed actor and hovered actor are both tiles, and the same tile, and can build on it and no occupants
+		if ((hoveredTile && pressedTile) && (hoveredTile == pressedTile) && hoveredTile->GetCanBuildOn() && hoveredTile->GetNumOccupants() == 0)
+			if (CheckMaterialRequirement(selectedTower->GetMaterialReqs()) && inBuildMode) // check if enough resources
+			{
+				UpdateMaterials(selectedTower->GetMaterialReqs().arr);
+				hoveredTile->AddOccupant(selectedTower);
+				IPoolableInterface::Execute_Activate(selectedTower);
+				selectedTower = nullptr;
+			}
+	}
+
+	else // if hovering over a tower with no selected tower -> destroy tower
+	{
+		ATowerBase* pressedTower = Cast<ATowerBase>(pressedActor);
+		ATowerBase* hoveredTower = Cast<ATowerBase>(currentHoveredOverActor);
+		if ((hoveredTower && pressedTower) && (hoveredTower == pressedTower) && inDestroyMode)
+		{
+			UpdateMaterials(hoveredTower->RecoverMaterials(), true);
+			// remove occupant from tile
+			ATile* tileUnderTower = RequestTile(hoveredTower->GetGridPos());
+			tileUnderTower->RemoveOccupant(hoveredTower);
+			IPoolableInterface::Execute_Disable(hoveredTower);
+		}
+	}
+	pressedActor = nullptr;
+}
+
+bool ATDPlayer::CheckMaterialRequirement(FLevelRequirements materialReqs)
+{
+	for (int i = 0; i < currentMaterials.Num(); i++)
+	{
+		if (currentMaterials[i] < materialReqs[i])
+			return false;
+	}
+	return true;
+}
+
+void ATDPlayer::UpdateMaterials(TArray<int> incomingMatls, bool AddMaterials)
+{
+	if (AddMaterials)
+	{
+		for (int i = 0; i < currentMaterials.Num(); i++)
+			currentMaterials[i] += incomingMatls[i];
+	}
+	else
+	{
+		for (int i = 0; i < currentMaterials.Num(); i++)
+			currentMaterials[i] -= incomingMatls[i];
+	}
+
+	ATowerDefenseHUD* TDHUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ATowerDefenseHUD>();
+	if (TDHUD)
+	{
+		UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(TDHUD->currentMenu);
+		if (gameMenu)
+			gameMenu->UpdateMaterialsText(currentMaterials);
+	}
+}
+
+void ATDPlayer::HandleMouseOver(AActor* hitActor)
+{
+	if (currentHoveredOverActor)
+	{
+		IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
+		if (Cast<ATowerBase>(currentHoveredOverActor))
+		{
+			ATowerBase* hoveredTower = Cast<ATowerBase>(currentHoveredOverActor);
+			ATile* tileUnderTower = RequestTile(hoveredTower->GetGridPos());
+			IInteractableInterface::Execute_OnHoverStop(tileUnderTower);
+		}
+	}
+		
+	// hover over logic
+	currentHoveredOverActor = hitActor;
+	IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
+
+	if (Cast<ATile>(currentHoveredOverActor)) // always change tile colour
+	{
+		ATile* currentTile = Cast<ATile>(currentHoveredOverActor);
+		currentTile->SetMaterialColor(ChooseTileColor(currentTile));
+		if (selectedTower) // in build mode trying to build tower
+		{
+			selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
+			selectedTower->SetGridPos(currentTile->GetGridPos());
+			// flood fill to determine if can build
+		}
+	}
+	else if (Cast<ATowerBase>(currentHoveredOverActor))
+	{
+		ATowerBase* hoveredTower = Cast<ATowerBase>(currentHoveredOverActor);
+		if (!hoveredTower->GetIsPlaced()) return;
+		ATile* tileUnderTower = RequestTile(hoveredTower->GetGridPos());
+		tileUnderTower->SetMaterialColor(ChooseTileColor(tileUnderTower));
+	}
+}
+
+ATile* ATDPlayer::RequestTile(FIntPoint pos)
+{
+	AGridManager* gridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
+	return gridManager->GetTileAtPos(pos);
+}
+
+void ATDPlayer::UpdateGridManagerData()
+{
 }
 
 void ATDPlayer::CameraFollow()
@@ -173,28 +301,8 @@ void ATDPlayer::CheckMouseOverActor()
 					if (hitActor != currentHoveredOverActor) // only do something if the hit actor is different than current 
 					{
 						GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
-						// Handle OnHoverStop 
-						if (currentHoveredOverActor)
-							IInteractableInterface::Execute_OnHoverStop(currentHoveredOverActor);
-
-						// hover over logic
-						currentHoveredOverActor = hitActor;
-						IInteractableInterface::Execute_OnHoverStart(currentHoveredOverActor);
-
-						// secondary actions
-						ATile* currentTile = Cast<ATile>(currentHoveredOverActor);
-
-						if (currentTile) // always change tile colour
-						{
-							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Changing Tile colour"));
-							currentTile->SetMaterialColor(ChooseTileColor(currentTile));
-						}
-							
-						if (selectedTower && currentTile) // in build mode trying to build tower
-						{
-							selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
-							// flood fill to determine if can build
-						}
+						
+						HandleMouseOver(hitActor);
 					}					
 				}
 				else // actor does not have the interface
@@ -211,11 +319,6 @@ void ATDPlayer::CheckMouseOverActor()
 			}
 		}
 	}
-}
-
-void ATDPlayer::OnMouseClicked()
-{
-
 }
 
 FLinearColor ATDPlayer::ChooseTileColor(ATile* tile)
@@ -300,7 +403,13 @@ void ATDPlayer::ReturnTower()
 	}
 }
 
-void ATDPlayer::ResetActor()
+void ATDPlayer::ResetActor(TArray<int> startingMatls)
 {
+	currentMaterials = { 0, 0, 0, 0 };
+	UpdateMaterials(startingMatls, true);
+	currentHoveredOverActor = nullptr;
+	selectedTower = nullptr;
+	pressedActor = nullptr;
+	SetModes(false, false);
 }
 

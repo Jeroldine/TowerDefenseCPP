@@ -126,6 +126,11 @@ FIntPoint AGridManager::GetStartTilePos()
 	return startTilePos;
 }
 
+ATile* AGridManager::GetTileAtPos(FIntPoint pos)
+{
+	return *mapOfTiles.Find(pos);
+}
+
 void AGridManager::StartGamePlay()
 {
 }
