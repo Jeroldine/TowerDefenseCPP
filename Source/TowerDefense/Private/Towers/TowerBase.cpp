@@ -2,6 +2,7 @@
 
 
 #include "Towers/TowerBase.h"
+#include "Enemies/EnemyAICharacter.h"
 
 // Sets default values
 ATowerBase::ATowerBase()

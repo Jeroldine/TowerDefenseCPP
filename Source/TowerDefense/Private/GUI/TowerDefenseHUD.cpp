@@ -3,6 +3,7 @@
 #include "GUI/TowerDefenseHUD.h"
 #include "TowerDefenseGameModeBase.h"
 #include "GUI/Menus/GameMenuWidget.h"
+#include "GUI/Menus/GameOverMenuWidget.h"
 
 void ATowerDefenseHUD::BeginPlay()
 {
@@ -53,6 +54,10 @@ void ATowerDefenseHUD::ShowGameMenu()
 void ATowerDefenseHUD::ShowGameOverMenu()
 {
 	ShowMenu(gameOverMenu);
+
+	ATowerDefenseGameModeBase* TDGameMode = Cast<ATowerDefenseGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (TDGameMode)
+		TDGameMode->EndGame();
 }
 
 void ATowerDefenseHUD::QuitGame()

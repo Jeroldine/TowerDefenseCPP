@@ -24,6 +24,8 @@ public:
 	}
 };
 
+class AEnemyAICharacter;
+
 //TArray<FEncapsule> MyArray;
 UCLASS(Blueprintable)
 class TOWERDEFENSE_API ATowerBase : public AActor, public IPoolableInterface, public IInteractableInterface
@@ -61,6 +63,10 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* towerMeshComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSet<int> targetableTypes;
+
 
 	///////////////
 	// Functions //

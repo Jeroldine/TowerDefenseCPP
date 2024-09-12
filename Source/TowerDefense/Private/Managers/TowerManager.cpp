@@ -25,7 +25,7 @@ void ATowerManager::BeginPlay()
 
 void ATowerManager::GatherObjectPools()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Storing Object Pools in TMap."));
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Storing Tower Object Pools in TMap."));
 	TArray<UObjectPoolComponent*> objPools;
 	GetComponents<UObjectPoolComponent>(objPools);
 
@@ -34,8 +34,6 @@ void ATowerManager::GatherObjectPools()
 		if (pool->GetObjectClass())
 		{
 			objectPoolComponents.Add(pool->GetObjectClass(), pool);
-			FString str = FString(pool->GetObjectClass()->GetName());
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, str);
 		}
 	}
 }
@@ -60,5 +58,13 @@ void ATowerManager::StartGamePlay()
 
 void ATowerManager::ResetActor()
 {
+	TArray<UClass*> keyArray;
+	objectPoolComponents.GenerateKeyArray(keyArray);
+
+	for (UClass* towerType : keyArray)
+	{
+		UObjectPoolComponent* objPool = *objectPoolComponents.Find(towerType);
+		objPool->ReturnAllToPool();
+	}
 }
 

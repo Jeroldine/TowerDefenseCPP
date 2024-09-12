@@ -41,9 +41,15 @@ public:
 	UFUNCTION()
 	UClass* GetObjectClass();
 
+	UFUNCTION()
 	void Initialize();
+
+	UFUNCTION()
+	void ReturnAllToPool();
 
 	AActor* CreateSingleObject();
 
 	AActor* SpawnObject();
+
+
 };

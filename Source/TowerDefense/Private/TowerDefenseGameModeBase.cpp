@@ -102,7 +102,11 @@ void ATowerDefenseGameModeBase::SpawnEnemyManager()
             SpawnParams.Owner = this;
             SpawnParams.Instigator = GetInstigator();
 
-            enemyManagerRef = World->SpawnActor<AEnemyManager>(EnemyManagerClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+            float xLoc = (gridManagerRef->GetStartTilePos()[0]) * tileSize;
+            float yLoc = (gridManagerRef->GetStartTilePos()[1] + 2.0f) * tileSize;
+            FVector spawnLoc = FVector(xLoc, yLoc, 0.0f);
+
+            enemyManagerRef = World->SpawnActor<AEnemyManager>(EnemyManagerClass, spawnLoc, FRotator(0, 0, 0), SpawnParams);
 
             if (enemyManagerRef)
             {

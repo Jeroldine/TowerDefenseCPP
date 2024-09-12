@@ -52,13 +52,21 @@ void UObjectPoolComponent::Initialize()
 
 			for (int i = 0; i < numObjects; i++)
 			{
-				AActor* obj = World->SpawnActor<AActor>(pooledObjClass, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
+				AActor* obj = World->SpawnActor<AActor>(pooledObjClass, FVector(0, 0, 88.0f), FRotator(0, 0, 0), SpawnParams);
 				IPoolableInterface::Execute_Disable(obj);
 				_objects.Add(obj);
 			}
 		}
 	}
 	
+}
+
+void UObjectPoolComponent::ReturnAllToPool()
+{
+	for (AActor* obj : _objects)
+	{
+		if (!obj->IsHidden()) IPoolableInterface::Execute_Disable(obj);
+	}
 }
 
 AActor* UObjectPoolComponent::CreateSingleObject()

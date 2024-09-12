@@ -96,4 +96,7 @@ public:
 
 	UFUNCTION()
 	void RestartGame();
+
+	UFUNCTION()
+	void EndGame();
 };

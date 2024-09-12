@@ -65,9 +65,6 @@ void AFortress::OnOverlap(AActor* OtherActor)
 	{
 		healthComponent->DecreaseHealth(enemy->GetDamageAmount());
 
-		// disable enemy
-		//IPoolableInterface::Execute_Disable(enemy);
-
 		// update healthbar
 		UpdatePlayerHUD();
 
@@ -77,18 +74,22 @@ void AFortress::OnOverlap(AActor* OtherActor)
 			EndGame();
 		}
 	}
-	else
-	{
-		// disable enemy
-		//IPoolableInterface::Execute_Disable(enemy);
-	}
+
+	IPoolableInterface::Execute_Disable(enemy);
 }
 
 void AFortress::EndGame()
 {
 	// update HUD
 	ATowerDefenseHUD* TDHUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ATowerDefenseHUD>();
-	if (TDHUD) TDHUD->ShowGameOverMenu();
+	if (TDHUD)
+	{
+		UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(TDHUD->currentMenu);
+		if (gameMenu)
+			gameMenu->OnCancelClick();
+
+		TDHUD->ShowGameOverMenu();
+	}
 
 	isAlive = false;
 
@@ -117,7 +118,6 @@ void AFortress::TestDamage(float dt)
 	{
 		EndGame();
 	}
-	
 }
 
 void AFortress::UpdatePlayerHUD()

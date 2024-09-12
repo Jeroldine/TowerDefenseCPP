@@ -126,6 +126,7 @@ void ATDPlayer::ChooseMouseClickAction()
 				UpdateMaterials(selectedTower->GetMaterialReqs().arr);
 				hoveredTile->AddOccupant(selectedTower);
 				IPoolableInterface::Execute_Activate(selectedTower);
+				// update grid manager data
 				selectedTower = nullptr;
 			}
 	}
@@ -141,6 +142,7 @@ void ATDPlayer::ChooseMouseClickAction()
 			ATile* tileUnderTower = RequestTile(hoveredTower->GetGridPos());
 			tileUnderTower->RemoveOccupant(hoveredTower);
 			IPoolableInterface::Execute_Disable(hoveredTower);
+			// update grid manager data
 		}
 	}
 	pressedActor = nullptr;

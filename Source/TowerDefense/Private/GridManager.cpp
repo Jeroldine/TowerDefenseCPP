@@ -131,6 +131,11 @@ ATile* AGridManager::GetTileAtPos(FIntPoint pos)
 	return *mapOfTiles.Find(pos);
 }
 
+TArray<float> AGridManager::GetDamageSpread()
+{
+	return TArray<float>();
+}
+
 void AGridManager::StartGamePlay()
 {
 }

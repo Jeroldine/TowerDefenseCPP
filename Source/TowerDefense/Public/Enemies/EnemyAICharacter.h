@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Helpers/HealthComponent.h"
 #include "Helpers/PoolableInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyAICharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -30,11 +33,27 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float dmgAmount = 10.0f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float moveSpeed = 300.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> possibleTerrains;
+
+	UPROPERTY(VisibleAnywhere)
+	int currentTerrain = 0;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FVector> pathPoints;
 
 	UPROPERTY(EditDefaultsOnly)
 	int currentPathIndex = 0;
+
+	///////////////
+	// Functions //
+	///////////////
+
+	UFUNCTION()
+	void ResetBehaviorTree();
 
 public:	
 	// Called every frame

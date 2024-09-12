@@ -3,6 +3,8 @@
 
 #include "Enemies/EnemyAICharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Enemies/EnemyAIController.h"
+#include "Managers/EnemyManager.h"
 
 // Sets default values
 AEnemyAICharacter::AEnemyAICharacter()
@@ -14,13 +16,28 @@ AEnemyAICharacter::AEnemyAICharacter()
 	{
 		healthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	}
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
 void AEnemyAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GetCharacterMovement()->MaxWalkSpeed = moveSpeed;
+}
+
+void AEnemyAICharacter::ResetBehaviorTree()
+{
+	AEnemyAIController* aiCtrl = Cast<AEnemyAIController>(GetController());
+	if (aiCtrl)
+	{
+		// Restart the behavior tree
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Restarting behaviour tree"));
+		aiCtrl->RunBehaviorTree(aiCtrl->startingBT);
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("No AIController?"));
 }
 
 // Called every frame
@@ -68,6 +85,10 @@ void AEnemyAICharacter::RequestNewPath()
 
 bool AEnemyAICharacter::Initialize_Implementation()
 {
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetActorHiddenInGame(false);
+	SetActorTickEnabled(true);
+
 	return false;
 }
 
@@ -80,6 +101,14 @@ bool AEnemyAICharacter::Disable_Implementation()
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
+
+	healthComponent->ResetHealth();
+
+	//remove from active enemies map in enemy manager
+	AEnemyManager* enemyManager = Cast<AEnemyManager>(UGameplayStatics::GetActorOfClass(this, AEnemyManager::StaticClass()));
+	FString enemyName;
+	this->GetName(enemyName);
+	enemyManager->RemoveActiveEnemy(enemyName);
 
 	return false;
 }

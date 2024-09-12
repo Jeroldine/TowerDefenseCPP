@@ -135,6 +135,9 @@ public:
 	ATile* GetTileAtPos(FIntPoint pos);
 
 	UFUNCTION()
+	TArray<float> GetDamageSpread();
+
+	UFUNCTION()
 	void StartGamePlay();
 
 	UFUNCTION()
