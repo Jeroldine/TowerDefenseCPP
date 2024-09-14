@@ -22,6 +22,117 @@ void AGridManager::BeginPlay()
 	
 }
 
+float AGridManager::TaxiCabHeuristic()
+{
+	return 0.0f;
+}
+
+float AGridManager::DamageHeuristic()
+{
+	return 0.0f;
+}
+
+float AGridManager::ChebyshevHeuristic()
+{
+	return 0.0f;
+}
+
+void AGridManager::UpdatePlacementMap(FIntPoint pos, int targetType, bool adding)
+{
+	switch (targetType)
+	{
+	case -1:
+		undergroundTowerPlacementMap.Add(pos, adding ? 1 : 0);
+		break;
+
+	case 0:
+		groundTowerPlacementMap.Add(pos, adding ? 1 : 0);
+		break;
+
+	case 1:
+		aerialTowerPlacementMap.Add(pos, adding ? 1 : 0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void AGridManager::UpdateDamageMap(FIntPoint pos, int targetType, int range, float power, bool adding)
+{
+	switch (targetType)
+	{
+	case -1:
+		UpdateDamageOnTiles(pos, range, power, adding ? 1 : -1, undergroundDamageMap);
+		break;
+
+	case 0:
+		UpdateDamageOnTiles(pos, range, power, adding ? 1 : -1, groundDamageMap);
+		break;
+
+	case 1:
+		UpdateDamageOnTiles(pos, range, power, adding ? 1 : -1, aerialDamageMap);
+		break;
+
+	default:
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Update Damage Map target type not valid"));
+		break;
+	}
+}
+
+void AGridManager::UpdateDamageOnTiles(FIntPoint center, int range, float power, float scale, TMap<FIntPoint, float>& dmgMap)
+{
+	int centerX = center.X;
+	int centerY = center.Y;
+	
+	//dmgMap.Add(center, 1000.0f);
+	dmgMap[center] += scale * 1000.0f;
+	FIntPoint newPos = center;
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("Power: " + FString::FromInt(power)));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("Range: " + FString::FromInt(range)));
+
+	for (int i = 0; i < range; i++)
+	{
+		for (int j = 0; j < range-i; j++)
+		{
+			// if there is a valid tile when doing upper right quadrant
+			if (centerX + j + 1 < actualGridRows && centerY + i < actualGridCols) 
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper right quadrant tile"));
+				newPos.X = centerX + j + 1;
+				newPos.Y = centerY + i;
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.X: " + FString::FromInt(newPos.X)));
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.Y: " + FString::FromInt(newPos.Y)));
+				dmgMap[newPos] += scale * power;
+			}
+			// if there is a valid tile when doing lower right quadrant
+			if (centerX - i + 1 > 0 && centerY + j + 1 < actualGridCols)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower right quadrant tile"));
+				newPos.X = centerX - i;
+				newPos.Y = centerY + j + 1;
+				dmgMap[newPos] += scale * power;
+			}
+			// if there is a valid tile when doing lower left quadrant
+			if (centerX - j > 0 && centerY - i + 1 > 0)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower left quadrant tile"));
+				newPos.X = centerX - j - 1;
+				newPos.Y = centerY - i;
+				dmgMap[newPos] += scale * power;
+			}
+			// if there is a valid tile when doing upper left quadrant
+			if (centerX + i < actualGridRows && centerY - j > 0)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper left quadrant tile"));
+				newPos.X = centerX + i;
+				newPos.Y = centerY - j - 1;
+				dmgMap[newPos] += scale * power;
+			}
+		}
+	}
+}
+
 // Called every frame
 void AGridManager::Tick(float DeltaTime)
 {
@@ -46,6 +157,14 @@ void AGridManager::SpawnGrid(int nRows, int nCols, float sideLength)
 				tile->SetMaterialInstance(tileMaterialMaster); // tile creates its own material instance
 			}
 			mapOfTiles.Add(tile->GetGridPos(), tile);
+
+			groundTowerPlacementMap.Add(tile->GetGridPos(), 0);
+			undergroundTowerPlacementMap.Add(tile->GetGridPos(), 0);
+			aerialTowerPlacementMap.Add(tile->GetGridPos(), 0);
+
+			groundDamageMap.Add(tile->GetGridPos(), 0.0f);
+			undergroundDamageMap.Add(tile->GetGridPos(), 0.0f);
+			aerialDamageMap.Add(tile->GetGridPos(), 0.0f);
 		}
 	}
 }
@@ -129,6 +248,25 @@ FIntPoint AGridManager::GetStartTilePos()
 ATile* AGridManager::GetTileAtPos(FIntPoint pos)
 {
 	return *mapOfTiles.Find(pos);
+}
+
+void AGridManager::UpdatePlacementAndDamageMaps(FIntPoint towerPos, TSet<int> towerTargets, int towerRange, float towerPower, bool addingTower)
+{
+	for (const int& targetType : towerTargets)
+	{
+		UpdatePlacementMap(towerPos, targetType, addingTower);
+		UpdateDamageMap(towerPos, targetType, towerRange, towerPower, addingTower);
+	}
+}
+
+TArray<FVector> AGridManager::FindPath(FIntPoint start, FIntPoint goal, UClass* enemyType)
+{
+	return TArray<FVector>();
+}
+
+TArray<FVector> AGridManager::RecoverPath()
+{
+	return TArray<FVector>();
 }
 
 TArray<float> AGridManager::GetDamageSpread()

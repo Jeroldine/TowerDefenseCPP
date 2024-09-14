@@ -113,7 +113,7 @@ void ATDPlayer::ChooseMouseClickAction()
 	// if not hovering over anthing clicking won't do anything
 	if (!currentHoveredOverActor) return;
 
-	// if hovering over a tile with a selected tower -> see if you can build
+	// if hovering over a tile with a selected tower and clicking the tile -> see if you can build
 	if (selectedTower)
 	{
 		ATile* pressedTile = Cast<ATile>(pressedActor);
@@ -127,11 +127,14 @@ void ATDPlayer::ChooseMouseClickAction()
 				hoveredTile->AddOccupant(selectedTower);
 				IPoolableInterface::Execute_Activate(selectedTower);
 				// update grid manager data
+				AGridManager* gridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
+				gridManager->UpdatePlacementAndDamageMaps(selectedTower->GetGridPos(), selectedTower->GetTargetableTypes(), 
+					selectedTower->GetAttackRange(), selectedTower->GetAttackPower());
 				selectedTower = nullptr;
 			}
 	}
 
-	else // if hovering over a tower with no selected tower -> destroy tower
+	else // if hovering over a tower with no selected tower and click -> destroy tower
 	{
 		ATowerBase* pressedTower = Cast<ATowerBase>(pressedActor);
 		ATowerBase* hoveredTower = Cast<ATowerBase>(currentHoveredOverActor);
@@ -143,6 +146,9 @@ void ATDPlayer::ChooseMouseClickAction()
 			tileUnderTower->RemoveOccupant(hoveredTower);
 			IPoolableInterface::Execute_Disable(hoveredTower);
 			// update grid manager data
+			AGridManager* gridManager = Cast<AGridManager>(UGameplayStatics::GetActorOfClass(this, AGridManager::StaticClass()));
+			gridManager->UpdatePlacementAndDamageMaps(hoveredTower->GetGridPos(), hoveredTower->GetTargetableTypes(), 
+				hoveredTower->GetAttackRange(), hoveredTower->GetAttackPower(), false);
 		}
 	}
 	pressedActor = nullptr;

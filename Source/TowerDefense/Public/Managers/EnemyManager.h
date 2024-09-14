@@ -127,6 +127,9 @@ public:
 	void RemoveActiveEnemy(FString leavingEnemy);
 
 	UFUNCTION()
+	void ClearAllTimers();
+
+	UFUNCTION()
 	void StartGamePlay();
 
 	UFUNCTION()

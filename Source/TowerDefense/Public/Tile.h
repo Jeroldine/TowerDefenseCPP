@@ -7,6 +7,7 @@
 #include "Math/IntPoint.h"
 #include "Helpers/InteractableInterface.h"
 #include "Towers/TowerBase.h"
+#include "Components/BoxComponent.h"
 #include "Enemies/EnemyAICharacter.h"
 #include "Tile.generated.h"
 
@@ -37,6 +38,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UMaterialInstanceDynamic* tileMaterialInstance;
+
+	UPROPERTY(EditDefaultsOnly)
+	UBoxComponent* boxComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	FLinearColor defaultColor;

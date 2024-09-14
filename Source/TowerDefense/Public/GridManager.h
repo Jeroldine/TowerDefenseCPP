@@ -102,6 +102,28 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<FIntPoint, float> aerialDamageMap;
 
+	///////////////
+	// Functions //
+	///////////////
+
+	UFUNCTION()
+	float TaxiCabHeuristic();
+
+	UFUNCTION()
+	float DamageHeuristic();
+
+	UFUNCTION()
+	float ChebyshevHeuristic();
+
+	UFUNCTION()
+	void UpdatePlacementMap(FIntPoint pos, int targetType, bool adding);
+
+	UFUNCTION()
+	void UpdateDamageMap(FIntPoint pos, int targetType, int range, float power, bool adding);
+
+	UFUNCTION()
+	void UpdateDamageOnTiles(FIntPoint center, int range, float power, float scale, TMap<FIntPoint, float>& dmgMap);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -133,6 +155,15 @@ public:
 
 	UFUNCTION()
 	ATile* GetTileAtPos(FIntPoint pos);
+
+	UFUNCTION()
+	void UpdatePlacementAndDamageMaps(FIntPoint towerPos, TSet<int> towerTargets, int towerRange, float towerPower, bool addingTower = true);
+
+	UFUNCTION()
+	TArray<FVector> FindPath(FIntPoint start, FIntPoint goal, UClass* enemyType);
+
+	UFUNCTION()
+	TArray<FVector> RecoverPath();
 
 	UFUNCTION()
 	TArray<float> GetDamageSpread();

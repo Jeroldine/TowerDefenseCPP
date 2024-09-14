@@ -205,3 +205,9 @@ void ATowerDefenseGameModeBase::RestartGame()
     ResetGame();
     StartGame();
 }
+
+void ATowerDefenseGameModeBase::EndGame()
+{
+    if (enemyManagerRef)
+        enemyManagerRef->ClearAllTimers();
+}

@@ -121,6 +121,12 @@ void AEnemyManager::RemoveActiveEnemy(FString leavingEnemy)
 	}
 }
 
+void AEnemyManager::ClearAllTimers()
+{
+	GetWorld()->GetTimerManager().ClearTimer(newWaveTimerHandle);
+	GetWorld()->GetTimerManager().ClearTimer(enemySpawnTimerHandle);
+}
+
 // Called every frame
 void AEnemyManager::Tick(float DeltaTime)
 {
@@ -158,9 +164,7 @@ void AEnemyManager::ResetActor()
 		objPool->ReturnAllToPool();
 	}
 
-	GetWorld()->GetTimerManager().ClearTimer(newWaveTimerHandle);
-	GetWorld()->GetTimerManager().ClearTimer(enemySpawnTimerHandle);
-
+	ClearAllTimers();
 	ConstructNewWave();
 }
 

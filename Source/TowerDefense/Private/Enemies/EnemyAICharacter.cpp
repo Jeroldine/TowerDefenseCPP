@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Enemies/EnemyAIController.h"
 #include "Managers/EnemyManager.h"
+#include "Tile.h"
 
 // Sets default values
 AEnemyAICharacter::AEnemyAICharacter()
@@ -16,6 +17,9 @@ AEnemyAICharacter::AEnemyAICharacter()
 	{
 		healthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	}
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyAICharacter::BeginOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AEnemyAICharacter::EndOverlap);
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
@@ -78,6 +82,26 @@ FVector AEnemyAICharacter::GetNextPointOnPath()
 	return pathPoints[currentPathIndex++];
 }
 
+void AEnemyAICharacter::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ATile* tile = Cast<ATile>(OtherActor);
+	if (tile)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Begin overlap with tile"));
+		tile->AddOccupant(this);
+	}
+}
+
+void AEnemyAICharacter::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	ATile* tile = Cast<ATile>(OtherActor);
+	if (tile)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("End overlap with tile"));
+		tile->RemoveOccupant(this);
+	}
+}
+
 void AEnemyAICharacter::RequestNewPath()
 {
 	
@@ -86,6 +110,7 @@ void AEnemyAICharacter::RequestNewPath()
 bool AEnemyAICharacter::Initialize_Implementation()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//GetCapsuleComponent()->CollisionPre
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
 

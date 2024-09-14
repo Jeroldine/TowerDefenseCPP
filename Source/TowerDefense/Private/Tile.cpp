@@ -9,9 +9,17 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	if (!RootComponent)
+	/*if (!RootComponent)
 	{
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TileSceneComponent"));
+	}*/
+
+	if (!boxComponent)
+	{
+		boxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+		//boxComponent->OnComponentBeginOverlap.AddDynamic(this, &AFortress::BeginOverlap);
+		//boxComponent->InitBoxExtent(FVector(150.0f, 100.0f, 100.0f));
+		RootComponent = boxComponent;
 	}
 }
 
@@ -58,6 +66,9 @@ void ATile::Initialize(int row, int col, float targetSideLength)
 	float newScale = (targetSideLength / originalLength) * shrinkFactor;
 
 	tileMeshComponent->SetRelativeScale3D(FVector(newScale, newScale, 1));
+
+	float newXExtent = (targetSideLength / 2.0f) * shrinkFactor;
+	boxComponent->InitBoxExtent(FVector(newXExtent, newXExtent, newXExtent));
 }
 
 void ATile::SetMaterialInstance(UMaterial* masterMaterial)

@@ -43,20 +43,26 @@ protected:
 	///////////////
 	// Variables //
 	///////////////
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	int currentLevel = 0;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FLevelRequirements> requiredResources;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TArray<int> investedResources;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float resourceRecoveryExtent = 0.5f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	bool isPlaced = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	int attackRange = 1;
+
+	UPROPERTY(EditDefaultsOnly)
+	float attackPower = 20.0f;
 
 	UPROPERTY()
 	FIntPoint gridPos;
@@ -108,6 +114,15 @@ public:
 
 	UFUNCTION()
 	bool GetIsPlaced();
+
+	UFUNCTION()
+	int GetAttackRange();
+
+	UFUNCTION()
+	float GetAttackPower();
+
+	UFUNCTION()
+	TSet<int> GetTargetableTypes();
 
 	// Poolable Interface Implementations
 	bool Initialize_Implementation() override;

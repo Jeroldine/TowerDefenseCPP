@@ -114,6 +114,21 @@ bool ATowerBase::GetIsPlaced()
 	return isPlaced;
 }
 
+int ATowerBase::GetAttackRange()
+{
+	return attackRange;
+}
+
+float ATowerBase::GetAttackPower()
+{
+	return attackPower;
+}
+
+TSet<int> ATowerBase::GetTargetableTypes()
+{
+	return targetableTypes;
+}
+
 bool ATowerBase::Initialize_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Initialize implementation"));
