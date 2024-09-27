@@ -3,6 +3,7 @@
 
 #include "Towers/TowerBase.h"
 #include "Enemies/EnemyAICharacter.h"
+#include "Towers/Projectile.h"
 
 // Sets default values
 ATowerBase::ATowerBase()
@@ -17,10 +18,26 @@ ATowerBase::ATowerBase()
 		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("TowerSceneComponent"));
 	}
 
+	if (!detectionSphere)
+	{
+		detectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+		detectionSphere->InitSphereRadius(250.0f);
+		detectionSphere->SetupAttachment(RootComponent);
+
+		detectionSphere->OnComponentBeginOverlap.AddDynamic(this, &ATowerBase::BeginOverlap);
+		detectionSphere->OnComponentEndOverlap.AddDynamic(this, &ATowerBase::EndOverlap);
+	}
+
 	if (!towerMeshComponent)
 	{
 		towerMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 		towerMeshComponent->SetupAttachment(RootComponent);
+	}
+
+	if (!projectileSpawnPoint)
+	{
+		projectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSpawnPoint"));
+		projectileSpawnPoint->SetupAttachment(RootComponent);
 	}
 
 }
@@ -36,11 +53,14 @@ void ATowerBase::ResetTower()
 {
 	currentLevel = 0;
 	isPlaced = false;
+	targetList.Empty();
+	GetWorldTimerManager().ClearTimer(shootTimerHandle);
 	
 	for (int i = 0; i < investedResources.Num(); i++)
 	{
 		investedResources[i] = 0;
 	}
+
 }
 
 void ATowerBase::BuildTower()
@@ -76,6 +96,92 @@ void ATowerBase::DestroyTower()
 
 void ATowerBase::AddToInvestedResources()
 {
+}
+
+void ATowerBase::BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AEnemyAICharacter* enemyAI = Cast<AEnemyAICharacter>(OtherActor);
+	if (enemyAI)
+	{
+		FString actorName;
+		enemyAI->GetName(actorName);
+		/*GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, actorName);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("entered Range"));*/
+		//add to target list
+		AddEnemyToTargetList(enemyAI);
+	}
+}
+
+void ATowerBase::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	AEnemyAICharacter* enemyAI = Cast<AEnemyAICharacter>(OtherActor);
+	if (enemyAI)
+	{
+		FString actorName;
+		enemyAI->GetName(actorName);
+		/*GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, actorName);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("left Range"));*/
+		//remove from target list
+		RemoveEnemyFromTargetList(enemyAI);
+	}
+}
+
+void ATowerBase::AddEnemyToTargetList(AEnemyAICharacter* enemy)
+{
+	FString actorName;
+	enemy->GetName(actorName);
+	targetList.Add(actorName, enemy);
+	if (!GetWorldTimerManager().IsTimerActive(shootTimerHandle)) // condition is true if encountering enemy for first time
+		Shoot();  
+}
+
+void ATowerBase::RemoveEnemyFromTargetList(AEnemyAICharacter* enemy)
+{
+	FString actorName;
+	enemy->GetName(actorName);
+	if (targetList.Contains(actorName))
+		targetList.Remove(actorName);
+}
+
+void ATowerBase::Shoot()
+{
+	if (targetList.Num() != 0) // if there are targets
+	{
+		TArray<FString> keyArray;
+		targetList.GenerateKeyArray(keyArray);
+		for (FString key : keyArray) // check if any have a matching terrain type that can be targeted
+		{
+			AEnemyAICharacter* target = *targetList.Find(key);
+			if (target && targetableTypes.Contains(target->GetCurrentTerrainType()))
+			{
+				UWorld* World = GetWorld();
+				if (World && ProjectileClass)
+				{
+					FActorSpawnParameters SpawnParams;
+					SpawnParams.Owner = this;
+					SpawnParams.Instigator = GetInstigator();
+					AProjectile* projectile = World->SpawnActor<AProjectile>(ProjectileClass, projectileSpawnPoint->GetComponentLocation(),
+						FRotator::ZeroRotator, SpawnParams);
+
+					if (projectile)
+					{
+						FVector launchDirection = (target->GetActorLocation() - projectileSpawnPoint->GetComponentLocation()).GetSafeNormal();
+						/*GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, (target->GetActorLocation()).ToString());
+						GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, (GetActorLocation()).ToString());*/
+						GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, launchDirection.ToString());
+						projectile->FireInDirection(launchDirection, attackPower);
+						// set timer to shoot again
+						GetWorldTimerManager().SetTimer(shootTimerHandle, this, &ATowerBase::Shoot, attackRate, false);
+					}
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(shootTimerHandle);
+	}
 }
 
 // Called every frame
@@ -131,8 +237,6 @@ TSet<int> ATowerBase::GetTargetableTypes()
 
 bool ATowerBase::Initialize_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Initialize implementation"));
-
 	SetActorLocation(FVector(0, 0, 0), false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorHiddenInGame(false);
 
@@ -141,8 +245,7 @@ bool ATowerBase::Initialize_Implementation()
 
 bool ATowerBase::Disable_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Disable implementation"));
-
+	detectionSphere->SetGenerateOverlapEvents(false);
 	towerMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);
 	SetActorHiddenInGame(true);
@@ -154,8 +257,7 @@ bool ATowerBase::Disable_Implementation()
 
 bool ATowerBase::Activate_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TowerBase Activate implementation"));
-
+	detectionSphere->SetGenerateOverlapEvents(true);
 	towerMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);

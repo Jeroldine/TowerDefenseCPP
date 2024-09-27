@@ -206,12 +206,15 @@ void ATDPlayer::HandleMouseOver(AActor* hitActor)
 	if (Cast<ATile>(currentHoveredOverActor)) // always change tile colour
 	{
 		ATile* currentTile = Cast<ATile>(currentHoveredOverActor);
-		currentTile->SetMaterialColor(ChooseTileColor(currentTile));
+
+		currentTile->SetMaterialColor(ChooseTileColor(currentTile)); // might move into GridManager
+
 		if (selectedTower) // in build mode trying to build tower
 		{
 			selectedTower->SetActorLocation(currentHoveredOverActor->GetActorLocation());
 			selectedTower->SetGridPos(currentTile->GetGridPos());
 			// flood fill to determine if can build
+			OnCheckForValidPath.Broadcast(currentTile->GetGridPos(), selectedTower->GetTargetableTypes());
 		}
 	}
 	else if (Cast<ATowerBase>(currentHoveredOverActor))
@@ -308,7 +311,7 @@ void ATDPlayer::CheckMouseOverActor()
 				{
 					if (hitActor != currentHoveredOverActor) // only do something if the hit actor is different than current 
 					{
-						GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
+						//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName()));
 						
 						HandleMouseOver(hitActor);
 					}					

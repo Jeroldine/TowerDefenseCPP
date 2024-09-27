@@ -63,6 +63,11 @@ float AEnemyAICharacter::GetDamageAmount()
 	return dmgAmount;
 }
 
+void AEnemyAICharacter::SetGridPos(FIntPoint pos)
+{
+	gridPos = pos;
+}
+
 FVector AEnemyAICharacter::GetNextPointOnPath()
 {
 	if (pathPoints.Num() == 0)
@@ -102,9 +107,48 @@ void AEnemyAICharacter::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 	}
 }
 
+int AEnemyAICharacter::GetCurrentTerrainType()
+{
+	return currentTerrain;
+}
+
 void AEnemyAICharacter::RequestNewPath()
 {
 	
+}
+
+void AEnemyAICharacter::TakeHit(float dmg)
+{
+	if (healthComponent->GetHealth() > 0)
+	{
+		healthComponent->DecreaseHealth(dmg);
+		float hp = healthComponent->GetHealth();
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::SanitizeFloat(hp));
+	}
+
+	if (healthComponent->GetHealth() <= 0)
+	{
+		AEnemyManager* enemyManager = Cast<AEnemyManager>(UGameplayStatics::GetActorOfClass(this, AEnemyManager::StaticClass()));
+		FString enemyName;
+		this->GetName(enemyName);
+		enemyManager->RemoveActiveEnemy(enemyName);
+		IPoolableInterface::Execute_Disable(this);
+	}
+}
+
+float AEnemyAICharacter::GetHealth()
+{
+	return healthComponent->GetHealth();
+}
+
+int AEnemyAICharacter::GetPointsValue()
+{
+	return pointsValue;
+}
+
+TArray<int> AEnemyAICharacter::GetDroppedResources()
+{
+	return droppedResources;
 }
 
 bool AEnemyAICharacter::Initialize_Implementation()
@@ -119,8 +163,6 @@ bool AEnemyAICharacter::Initialize_Implementation()
 
 bool AEnemyAICharacter::Disable_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("EnemyAICharacter Disable implementation"));
-
 	// get mesh and disable collisions
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorLocation(FVector(0, 0, -500), false, nullptr, ETeleportType::TeleportPhysics);

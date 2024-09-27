@@ -2,6 +2,7 @@
 
 
 #include "GridManager.h"
+#include "TDPlayer.h"
 
 // Sets default values
 AGridManager::AGridManager()
@@ -20,6 +21,12 @@ void AGridManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	ATDPlayer* player = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
+	if (player)
+	{
+		// Bind the OnTowerBuilt event to the OnTowerBuiltHandler function
+		player->OnCheckForValidPath.AddDynamic(this, &AGridManager::OnCheckForValidPathHandler);
+	}
 }
 
 float AGridManager::TaxiCabHeuristic()
@@ -98,17 +105,17 @@ void AGridManager::UpdateDamageOnTiles(FIntPoint center, int range, float power,
 			// if there is a valid tile when doing upper right quadrant
 			if (centerX + j + 1 < actualGridRows && centerY + i < actualGridCols) 
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper right quadrant tile"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper right quadrant tile"));
 				newPos.X = centerX + j + 1;
 				newPos.Y = centerY + i;
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.X: " + FString::FromInt(newPos.X)));
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.Y: " + FString::FromInt(newPos.Y)));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.X: " + FString::FromInt(newPos.X)));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("newPos.Y: " + FString::FromInt(newPos.Y)));
 				dmgMap[newPos] += scale * power;
 			}
 			// if there is a valid tile when doing lower right quadrant
 			if (centerX - i + 1 > 0 && centerY + j + 1 < actualGridCols)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower right quadrant tile"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower right quadrant tile"));
 				newPos.X = centerX - i;
 				newPos.Y = centerY + j + 1;
 				dmgMap[newPos] += scale * power;
@@ -116,7 +123,7 @@ void AGridManager::UpdateDamageOnTiles(FIntPoint center, int range, float power,
 			// if there is a valid tile when doing lower left quadrant
 			if (centerX - j > 0 && centerY - i + 1 > 0)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower left quadrant tile"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid lower left quadrant tile"));
 				newPos.X = centerX - j - 1;
 				newPos.Y = centerY - i;
 				dmgMap[newPos] += scale * power;
@@ -124,13 +131,27 @@ void AGridManager::UpdateDamageOnTiles(FIntPoint center, int range, float power,
 			// if there is a valid tile when doing upper left quadrant
 			if (centerX + i < actualGridRows && centerY - j > 0)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper left quadrant tile"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Valid upper left quadrant tile"));
 				newPos.X = centerX + i;
 				newPos.Y = centerY - j - 1;
 				dmgMap[newPos] += scale * power;
 			}
 		}
 	}
+}
+
+void AGridManager::OnCheckForValidPathHandler(FIntPoint pos, TSet<int> targetTypes)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("OnTileHoveredStart Event heard in GridManager."));
+
+	for (const int& element : targetTypes)
+	{
+	}
+}
+
+bool AGridManager::CheckForWayOut(FIntPoint pos, int targetType)
+{
+	
 }
 
 // Called every frame
@@ -248,6 +269,21 @@ FIntPoint AGridManager::GetStartTilePos()
 ATile* AGridManager::GetTileAtPos(FIntPoint pos)
 {
 	return *mapOfTiles.Find(pos);
+}
+
+TMap<FIntPoint, int> AGridManager::GetPlacementMap(int type)
+{
+	switch (type)
+	{
+	case -1:
+		return undergroundTowerPlacementMap;
+	case 0:
+		return groundTowerPlacementMap;
+	case 1:
+		return aerialTowerPlacementMap;
+	default:
+		return groundTowerPlacementMap;
+	}
 }
 
 void AGridManager::UpdatePlacementAndDamageMaps(FIntPoint towerPos, TSet<int> towerTargets, int towerRange, float towerPower, bool addingTower)

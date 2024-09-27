@@ -15,6 +15,8 @@
 #include "Tile.h"
 #include "TDPlayer.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCheckForValidPath, FIntPoint, pos, TSet<int>, towerTargetTypes);
+
 UCLASS()
 class TOWERDEFENSE_API ATDPlayer : public APawn
 {
@@ -61,9 +63,6 @@ protected:
 	bool CheckMaterialRequirement(FLevelRequirements materialReqs);
 
 	UFUNCTION()
-	void UpdateMaterials(TArray<int> incomingMatls, bool AddMaterials = false);
-
-	UFUNCTION()
 	void HandleMouseOver(AActor* hitActor);
 
 	UFUNCTION()
@@ -81,7 +80,7 @@ protected:
 	///////////////
 	
 	// resources
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	TArray<int> currentMaterials = { 0, 0, 0, 0 };
 
 	// cached objects that I interact with
@@ -139,6 +138,9 @@ public:
 	void ReturnTower();
 
 	UFUNCTION()
+	void UpdateMaterials(TArray<int> incomingMatls, bool AddMaterials = false);
+
+	UFUNCTION()
 	void ResetActor(TArray<int> startingMatls);
 
 	///////////////
@@ -181,6 +183,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	FVector maxBounds = FVector(500, 3000, 0);
+
+	//events
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCheckForValidPath OnCheckForValidPath;
 
 	// colours
 	UPROPERTY(EditDefaultsOnly, Category = Colours)

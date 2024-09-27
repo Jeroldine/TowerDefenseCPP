@@ -42,11 +42,20 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	int currentTerrain = 0;
 
+	UPROPERTY(VisibleAnywhere)
+	FIntPoint gridPos;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FVector> pathPoints;
 
 	UPROPERTY(EditDefaultsOnly)
 	int currentPathIndex = 0;
+
+	UPROPERTY(EditAnywhere)
+	int pointsValue = -1;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> droppedResources = { -1, -1, -1, -1 };
 
 	///////////////
 	// Functions //
@@ -76,6 +85,9 @@ public:
 	float GetDamageAmount();
 
 	UFUNCTION()
+	void SetGridPos(FIntPoint pos);
+
+	UFUNCTION()
 	FVector GetNextPointOnPath();
 
 	UFUNCTION()
@@ -85,7 +97,21 @@ public:
 	void EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
+	int GetCurrentTerrainType();
+
+	UFUNCTION()
 	void RequestNewPath();
+
+	UFUNCTION()
+	void TakeHit(float dmg);
+
+	UFUNCTION()
+	float GetHealth();
+
+	UFUNCTION()
+	int GetPointsValue();
+
+	TArray<int> GetDroppedResources();
 
 	// IPoolableInterface functions
 	bool Initialize_Implementation() override;

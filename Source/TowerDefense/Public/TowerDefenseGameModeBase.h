@@ -53,6 +53,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	ATDPlayer* playerRef;
 
+	UPROPERTY(VisibleAnywhere)
+	int gameScore = 0;
+
 	// game flow
 	UFUNCTION()
 	void StartGame();
@@ -99,4 +102,10 @@ public:
 
 	UFUNCTION()
 	void EndGame();
+
+	UFUNCTION()
+	void UpdateGameScore(int amount);
+
+	UFUNCTION()
+	int GetGameScore();
 };

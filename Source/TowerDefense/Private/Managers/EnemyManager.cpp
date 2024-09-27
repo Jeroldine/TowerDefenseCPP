@@ -4,7 +4,9 @@
 #include "Managers/EnemyManager.h"
 #include "GridManager.h"
 #include "GUI/TowerDefenseHUD.h"
+#include "TowerDefenseGameModeBase.h"
 #include "GUI/Menus/GameMenuWidget.h"
+#include "TDPlayer.h"
 
 // Sets default values
 AEnemyManager::AEnemyManager()
@@ -111,7 +113,28 @@ UClass* AEnemyManager::ChooseEnemyToSpawn(TArray<float> towerDamageSpread)
 void AEnemyManager::RemoveActiveEnemy(FString leavingEnemy)
 {
 	if (activeEnemies.Contains(leavingEnemy))
+	{
+		if (activeEnemies[leavingEnemy]->GetHealth() <= 0)
+		{
+			ATowerDefenseGameModeBase* TDGameMode = Cast<ATowerDefenseGameModeBase>(UGameplayStatics::GetGameMode(this));
+			if (TDGameMode)
+			{
+				TDGameMode->UpdateGameScore(activeEnemies[leavingEnemy]->GetPointsValue());
+				ATowerDefenseHUD* TDHUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<ATowerDefenseHUD>();
+				if (TDHUD)
+				{
+					UGameMenuWidget* gameMenu = Cast<UGameMenuWidget>(TDHUD->currentMenu);
+					if (gameMenu)
+						gameMenu->UpdateScoreText(TDGameMode->GetGameScore());
+				}
+			}
+			ATDPlayer* player = Cast<ATDPlayer>(UGameplayStatics::GetActorOfClass(this, ATDPlayer::StaticClass()));
+			if (player)
+				player->UpdateMaterials(activeEnemies[leavingEnemy]->GetDroppedResources(), true);
+		}
+		
 		activeEnemies.Remove(leavingEnemy);
+	}
 
 	// check if no more enemies to spawn and no more active enemies
 	if (waveOrder.Num() == 0 && activeEnemies.Num() == 0)

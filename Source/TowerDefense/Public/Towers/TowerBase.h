@@ -7,6 +7,7 @@
 #include "Math/IntPoint.h"
 #include "Helpers/PoolableInterface.h"
 #include "Helpers/InteractableInterface.h"
+#include "Components/SphereComponent.h"
 #include "TowerBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -64,6 +65,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float attackPower = 20.0f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float attackRate = 0.5f;
+
 	UPROPERTY()
 	FIntPoint gridPos;
 
@@ -73,6 +77,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSet<int> targetableTypes;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Sensing)
+	USphereComponent* detectionSphere;
+
+	UPROPERTY(VisibleAnywhere, Category = Sensing)
+	TMap<FString, AEnemyAICharacter*> targetList;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Shooting)
+	USceneComponent* projectileSpawnPoint;
+
+	// Projectile class to spawn.
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileClass;
 
 	///////////////
 	// Functions //
@@ -91,6 +107,25 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void AddToInvestedResources();
+
+	UFUNCTION()
+	void BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void AddEnemyToTargetList(AEnemyAICharacter* enemy);
+
+	UFUNCTION()
+	void RemoveEnemyFromTargetList(AEnemyAICharacter* enemy);
+
+	// Shooting
+	FTimerHandle shootTimerHandle;
+	UFUNCTION()
+	void Shoot();
+
+	
 
 public:	
 	// Called every frame

@@ -11,7 +11,7 @@ void ATowerDefenseGameModeBase::StartPlay()
 
     // Display a debug message for five seconds. 
     // The -1 "Key" value argument prevents the message from being updated or refreshed.
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Hello World, this is TowerDefenseGameMode!"));
+    //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Hello World, this is TowerDefenseGameMode!"));
 
     /*int test = 10;
     bool boolTest = true;
@@ -40,7 +40,7 @@ void ATowerDefenseGameModeBase::SpawnGridManager(int rows, int cols, float sideL
             if (gridManagerRef)
             {
                 // Successfully spawned the GridManager
-                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("GridManager spawned successfully."));
+                //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("GridManager spawned successfully."));
                 // set starting and goal tiles
 
 
@@ -77,7 +77,7 @@ void ATowerDefenseGameModeBase::SpawnTowerManager()
             if (towerManagerRef)
             {
                 // Successfully spawned the GridManager
-                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("TowerManager spawned successfully."));
+                //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("TowerManager spawned successfully."));
             }
             else
             {
@@ -111,7 +111,7 @@ void ATowerDefenseGameModeBase::SpawnEnemyManager()
             if (enemyManagerRef)
             {
                 // Successfully spawned the GridManager
-                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("EnemyManager spawned successfully."));
+                //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("EnemyManager spawned successfully."));
             }
             else
             {
@@ -148,7 +148,7 @@ void ATowerDefenseGameModeBase::SpawnFortress()
 
             if (fortressRef)
             {
-                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Fortress spawned successfully."));
+                //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Fortress spawned successfully."));
             }
             else
             {
@@ -198,6 +198,8 @@ void ATowerDefenseGameModeBase::ResetGame()
 
     if (playerRef)
         playerRef->ResetActor(startingMaterials);
+
+    gameScore = 0;
 }
 
 void ATowerDefenseGameModeBase::RestartGame()
@@ -210,4 +212,15 @@ void ATowerDefenseGameModeBase::EndGame()
 {
     if (enemyManagerRef)
         enemyManagerRef->ClearAllTimers();
+}
+
+void ATowerDefenseGameModeBase::UpdateGameScore(int amount)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "Increasing score");
+    gameScore += amount;
+}
+
+int ATowerDefenseGameModeBase::GetGameScore()
+{
+    return gameScore;
 }

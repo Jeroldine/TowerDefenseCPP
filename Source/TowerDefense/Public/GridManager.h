@@ -102,6 +102,22 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<FIntPoint, float> aerialDamageMap;
 
+	// colours
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor defaultColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor highlightColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor buildColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor upgradeColour;
+
+	UPROPERTY(EditDefaultsOnly, Category = Colours)
+	FLinearColor destroyColour;
+
 	///////////////
 	// Functions //
 	///////////////
@@ -123,6 +139,12 @@ protected:
 
 	UFUNCTION()
 	void UpdateDamageOnTiles(FIntPoint center, int range, float power, float scale, TMap<FIntPoint, float>& dmgMap);
+
+	UFUNCTION()
+	void OnCheckForValidPathHandler(FIntPoint pos, TSet<int> targetTypes);
+
+	UFUNCTION()
+	bool CheckForWayOut(TMap<FIntPoint, int> placementMap, FIntPoint pos, int targetType);
 
 public:	
 	// Called every frame
@@ -155,6 +177,9 @@ public:
 
 	UFUNCTION()
 	ATile* GetTileAtPos(FIntPoint pos);
+
+	UFUNCTION()
+	TMap<FIntPoint, int> GetPlacementMap(int type);
 
 	UFUNCTION()
 	void UpdatePlacementAndDamageMaps(FIntPoint towerPos, TSet<int> towerTargets, int towerRange, float towerPower, bool addingTower = true);
